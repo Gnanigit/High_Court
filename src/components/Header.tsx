@@ -6,7 +6,7 @@ const Header: React.FC = () => {
       <div className="w-full justify-between flex items-center space-x-4 mb-7">
         <div className=" flex items-center space-x-4">
           <img
-            src="../../../public/logo.jpg"
+            src="/logo.jpg"
             alt="Telangana High Court Logo"
             className="w-20"
           />
