@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 const Footer: React.FC = () => {
   return (
@@ -7,7 +6,8 @@ const Footer: React.FC = () => {
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Document Language Translator
+            &copy; {new Date().getFullYear()} Telangana High Judgement Language
+            Translator
           </p>
         </div>
       </div>
