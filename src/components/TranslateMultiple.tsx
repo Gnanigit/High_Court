@@ -5,6 +5,7 @@ import TranslationDisplay from "@/components/TranslationDisplay";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
+import { getLanguageByCode } from "@/utils/languages";
 import {
   extractTextFromImage,
   translateText,
@@ -13,7 +14,7 @@ import {
 
 const TranslateMultiple = () => {
   const [sourceLanguage, setSourceLanguage] = useState("en");
-  const [targetLanguage, setTargetLanguage] = useState("es");
+  const [targetLanguage, setTargetLanguage] = useState("tel");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [translationResult, setTranslationResult] =
     useState<TranslationResult | null>(null);
@@ -55,8 +56,15 @@ const TranslateMultiple = () => {
       );
 
       setTranslationResult(result);
+      const sourceLanguageFull = result
+        ? getLanguageByCode(sourceLanguage).name
+        : "Source";
+      const targetLanguageFull = result
+        ? getLanguageByCode(targetLanguage).name
+        : "Target";
+
       toast.success("Translation complete", {
-        description: `Translated from ${sourceLanguage} to ${targetLanguage}`,
+        description: `Translated from ${sourceLanguageFull} (${sourceLanguage}) to ${targetLanguageFull} (${targetLanguage})`,
       });
     } catch (error) {
       console.error("Translation error:", error);
