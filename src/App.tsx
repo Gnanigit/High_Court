@@ -17,7 +17,14 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/translate" element={<TranslateScreen />} />
+          <Route
+            path="/translate/single"
+            element={<TranslateScreen type="single" />}
+          />
+          <Route
+            path="/translate/multiple"
+            element={<TranslateScreen type="multiple" />}
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

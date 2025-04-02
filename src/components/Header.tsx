@@ -86,16 +86,14 @@ const Header: React.FC = () => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <Link to="/translate">Translate to Telugu</Link>
+            <Link to="/translate/single">Translate to Telugu</Link>
 
-            {/* Dropdown container with padding to create hover area */}
             {showTranslateDropdown && (
               <div
                 className="absolute left-0 top-full pt-2 z-20"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                {/* Glassmorphism Dropdown */}
                 <div className="w-56 rounded-md overflow-hidden backdrop-blur-md bg-white/70 border border-white/30 shadow-lg">
                   <div className="py-1">
                     <Link

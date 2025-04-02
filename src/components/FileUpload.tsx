@@ -4,12 +4,14 @@ import { Upload, X } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
 interface FileUploadProps {
+  type: string;
   onFileSelected: (file: File | null) => void;
   selectedFile: File | null;
   disabled?: boolean;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
+  type,
   onFileSelected,
   selectedFile,
   disabled = false,
@@ -105,12 +107,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <div className="mb-3 p-3 rounded-full bg-primary_head/10">
               <Upload className="h-6 w-6 text-primary_head" />
             </div>
-            <h3 className="text-lg font-medium mb-1">Upload an image or PDF</h3>
-            <p className="text-sm text-muted-foreground mb-3 max-w-xs">
-              Drag and drop a file, or click to select
-            </p>
+            {type === "single" ? (
+              <h3 className="text-lg font-medium mb-1">Upload a single PDF</h3>
+            ) : (
+              <h3 className="text-lg font-medium mb-1">
+                Upload multiple PDFs in a ZIP file
+              </h3>
+            )}
+            {type === "single" ? (
+              <p className="text-sm text-muted-foreground mb-3 max-w-xs">
+                Drag and drop a PDF file, or click to select.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground mb-3 max-w-xs">
+                Drag and drop a Zip file, or click to select
+              </p>
+            )}
             <p className="text-xs text-muted-foreground">
-              Supported formats: JPEG, PNG, PDF (Max 5MB for images)
+              Supported format: PDF (Max 5MB for pdf)
             </p>
           </div>
         </div>

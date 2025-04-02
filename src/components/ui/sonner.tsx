@@ -1,4 +1,4 @@
-import { Toaster as Sonner, toast } from "sonner"; // ✅ Import toast
+import { Toaster as Sonner, toast } from "sonner";
 import { useTheme } from "next-themes";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;

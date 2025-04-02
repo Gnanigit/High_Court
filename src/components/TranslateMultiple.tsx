@@ -11,7 +11,7 @@ import {
   TranslationResult,
 } from "@/utils/translate";
 
-const Translate = () => {
+const TranslateMultiple = () => {
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("es");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -73,8 +73,8 @@ const Translate = () => {
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center text-center">
           <p className="text-muted-foreground text-lg max-w-2xl animate-slide-up delay-75">
-            Upload an PDF containing text, select languages, and instantly
-            translate the content
+            Upload multiple PDFs containing text, select the languages, and
+            instantly translate the content.
           </p>
         </div>
       </div>
@@ -96,6 +96,7 @@ const Translate = () => {
           <div className="w-full">
             <h2 className="text-xl font-medium mb-4">Upload Document</h2>
             <FileUpload
+              type="multiple"
               onFileSelected={handleFileSelected}
               selectedFile={selectedFile}
               disabled={isLoading}
@@ -128,4 +129,4 @@ const Translate = () => {
   );
 };
 
-export default Translate;
+export default TranslateMultiple;
