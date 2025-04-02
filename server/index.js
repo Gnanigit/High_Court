@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.post("/api/send-approval-emails", async (req, res) => {
   try {
     const { approvers, translationData, fileName, subject, message } = req.body;
-
+    console.log(req.body);
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: parseInt(process.env.EMAIL_PORT || "587"),
