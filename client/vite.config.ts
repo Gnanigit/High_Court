@@ -4,14 +4,11 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
-  // server: {
-  //   host: "::",
-  //   port: 8080,
-  // },
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
+        // target: "http://localhost:3001",
+        target: "https://high-court.onrender.com",
         changeOrigin: true,
       },
     },
