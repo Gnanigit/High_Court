@@ -83,12 +83,3 @@ const GoogleDrivePicker: React.FC = () => {
 };
 
 export default GoogleDrivePicker;
-{
-  /* <Button
-              onClick={handleGoogleDriveUpload}
-              className="bg-primary_head hover:bg-primary_head text-white px-4 py-2 rounded flex items-center mb-5"
-              disabled={disabled}
-            >
-              <Cloud className="h-5 w-5 mr-2" /> Upload from Google Drive
-            </Button> */
-}
