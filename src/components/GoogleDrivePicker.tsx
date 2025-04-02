@@ -15,9 +15,8 @@ const GoogleDrivePicker: React.FC = () => {
 
   const handleOpenPicker = () => {
     openPicker({
-      clientId:
-        "137045964913-b2mfh5gt7vkpek1gasipp12hqu1t514h.apps.googleusercontent.com",
-      developerKey: "AIzaSyAetIcnXvuoFxiUp6nLl0_AC097bJy3InU",
+      clientId: process.env.REACT_APP_CLIENT_ID,
+      developerKey: process.env.REACT_APP_API_KEY,
       viewId: "DOCS",
       showUploadView: true,
       showUploadFolders: true,
