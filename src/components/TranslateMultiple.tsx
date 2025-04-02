@@ -105,7 +105,7 @@ const TranslateMultiple = () => {
             <MultipleFileUpload
               type="multiple"
               onFilesSelected={handleFileSelected}
-              selectedFiles={selectedFiles} // Updated prop name
+              selectedFiles={selectedFiles}
               disabled={isLoading}
             />
           </div>
@@ -113,14 +113,13 @@ const TranslateMultiple = () => {
           <div className="w-full flex justify-center">
             <Button
               onClick={handleTranslate}
-              disabled={selectedFiles.length === 0 || isLoading} // Fixed condition
+              disabled={selectedFiles.length === 0 || isLoading}
               className="w-full sm:w-auto px-8 transition-all bg-primary_head/50 hover:bg-primary_head"
             >
               {isLoading ? "Translating..." : "Translate Now"}
             </Button>
           </div>
 
-          {/* Results */}
           {(translationResult || isLoading) && (
             <>
               <Separator className="my-8" />

@@ -148,7 +148,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           ) : (
             <iframe
               src={previewUrl!}
-              className="w-full h-[500px]"
+              className="w-full h-[700px]"
               title="PDF Preview"
             />
           )}

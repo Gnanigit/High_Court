@@ -17,6 +17,10 @@ const MultipleFileUpload: React.FC<MultipleFileUploadProps> = ({
   disabled = false,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [activePreviewIndex, setActivePreviewIndex] = useState<number | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -74,6 +78,21 @@ const MultipleFileUpload: React.FC<MultipleFileUploadProps> = ({
   const handleRemoveFile = (index: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     onFilesSelected(updatedFiles);
+    if (activePreviewIndex === index) {
+      setPreviewUrl(null);
+      setActivePreviewIndex(null);
+    }
+  };
+
+  const handlePreviewFile = (index: number) => {
+    if (activePreviewIndex === index) {
+      setPreviewUrl(null);
+      setActivePreviewIndex(null);
+    } else {
+      const objectUrl = URL.createObjectURL(selectedFiles[index]);
+      setPreviewUrl(objectUrl);
+      setActivePreviewIndex(index);
+    }
   };
 
   return (
@@ -110,20 +129,48 @@ const MultipleFileUpload: React.FC<MultipleFileUploadProps> = ({
       ) : (
         <div className="space-y-4">
           {selectedFiles.map((file, index) => (
-            <div
-              key={index}
-              className="relative flex items-center justify-between p-3 border rounded-lg bg-gray-100"
-            >
-              <span className="text-sm text-muted-foreground">{file.name}</span>
-              <Button
-                variant="destructive"
-                size="icon"
-                className="bg-primary_head"
-                onClick={() => handleRemoveFile(index)}
-                disabled={disabled}
+            <div key={index} className="relative">
+              <div
+                className="flex items-center justify-between p-3 border rounded-lg bg-gray-100 cursor-pointer"
+                onClick={() => handlePreviewFile(index)}
               >
-                <X className="h-4 w-4" />
-              </Button>
+                <span className="text-sm text-muted-foreground">
+                  {file.name}
+                </span>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="bg-primary_head"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveFile(index);
+                  }}
+                  disabled={disabled}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              {activePreviewIndex === index && previewUrl && (
+                <div className="relative mt-2 border rounded-lg overflow-hidden">
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 z-10 bg-primary_head"
+                    onClick={() => {
+                      setPreviewUrl(null);
+                      setActivePreviewIndex(null);
+                    }}
+                    disabled={disabled}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <iframe
+                    src={previewUrl}
+                    className="w-full h-[700px]"
+                    title="PDF Preview"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
