@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { TranslationResult } from '@/utils/translate';
-import { getLanguageByCode } from '@/utils/languages';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+import React from "react";
+import { TranslationResult } from "@/utils/translate";
+import { getLanguageByCode } from "@/utils/languages";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TranslationDisplayProps {
   result: TranslationResult | null;
@@ -17,7 +16,9 @@ const TextPanel: React.FC<{
 }> = ({ title, text, isLoading = false }) => {
   return (
     <div className="glass-panel rounded-lg p-4 h-full flex flex-col">
-      <h3 className="text-sm font-medium text-muted-foreground mb-2">{title}</h3>
+      <h3 className="text-sm font-medium text-muted-foreground mb-2">
+        {title}
+      </h3>
       {isLoading ? (
         <div className="space-y-2 flex-1">
           <Skeleton className="h-4 w-full" />
@@ -37,38 +38,41 @@ const TextPanel: React.FC<{
   );
 };
 
-const TranslationDisplay: React.FC<TranslationDisplayProps> = ({ 
-  result, 
-  isLoading = false 
+const TranslationDisplay: React.FC<TranslationDisplayProps> = ({
+  result,
+  isLoading = false,
 }) => {
   if (!result && !isLoading) {
     return null;
   }
 
-  const sourceLanguage = result ? getLanguageByCode(result.sourceLanguage).name : 'Source';
-  const targetLanguage = result ? getLanguageByCode(result.targetLanguage).name : 'Target';
+  const sourceLanguage = result
+    ? getLanguageByCode(result.sourceLanguage).name
+    : "Source";
+  const targetLanguage = result
+    ? getLanguageByCode(result.targetLanguage).name
+    : "Target";
 
   return (
-    <div className="w-full animate-fade-in animate-slide-up delay-300">
+    <div className="w-full animate-fade-in  delay-300">
       <div className="mb-4">
         <h2 className="text-xl font-medium">Translation Results</h2>
         <p className="text-sm text-muted-foreground">
-          {isLoading ? 
-            "Processing your translation..." :
-            `Translated from ${sourceLanguage} to ${targetLanguage}`
-          }
+          {isLoading
+            ? "Processing your translation..."
+            : `Translated from ${sourceLanguage} to ${targetLanguage}`}
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <TextPanel 
-          title={sourceLanguage} 
-          text={result?.originalText || ''} 
+        <TextPanel
+          title={sourceLanguage}
+          text={result?.originalText || ""}
           isLoading={isLoading}
         />
-        <TextPanel 
-          title={targetLanguage} 
-          text={result?.translatedText || ''} 
+        <TextPanel
+          title={targetLanguage}
+          text={result?.translatedText || ""}
           isLoading={isLoading}
         />
       </div>

@@ -119,11 +119,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
           <Button
             variant="destructive"
             size="icon"
-            className="absolute top-2 right-2 z-10"
+            className="absolute top-10 right-4 z-10 bg-primary_head"
             onClick={handleRemoveFile}
             disabled={disabled}
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 " />
           </Button>
           {selectedFile.type.startsWith("image/") ? (
             <img

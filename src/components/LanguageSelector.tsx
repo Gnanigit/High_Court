@@ -25,7 +25,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 p-4 rounded-lg glass-panel animate-scale-in">
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 rounded-lg glass-panel animate-scale-in items-center justify-center w-full">
       <div className="w-full sm:w-auto">
         <label
           htmlFor="source-language"

@@ -9,13 +9,11 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Full-width Header */}
-      <div className="w-full z-10">
+      <div className=" sticky top-0 left-0 right-0  w-full z-10">
         <Header />
       </div>
 
       <div className="flex flex-1">
-        {/* Sidebar positioned below header */}
         <div
           className={`${
             isCollapsed ? "w-16" : "w-64"
@@ -24,7 +22,6 @@ const Index = () => {
           <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
         </div>
 
-        {/* Main Content */}
         <div className={`flex flex-col transition-all duration-300 w-full`}>
           <div className="flex-1 overflow-y-auto p-6">
             <Dashboard />

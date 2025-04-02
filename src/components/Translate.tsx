@@ -80,7 +80,6 @@ const Translate = () => {
       </div>
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Language Selection */}
           <div className="w-full">
             <h2 className="text-xl font-medium mb-4">Select Languages</h2>
             <LanguageSelector
@@ -94,9 +93,8 @@ const Translate = () => {
 
           <Separator />
 
-          {/* File Upload */}
           <div className="w-full">
-            <h2 className="text-xl font-medium mb-4">Upload Image</h2>
+            <h2 className="text-xl font-medium mb-4">Upload Document</h2>
             <FileUpload
               onFileSelected={handleFileSelected}
               selectedFile={selectedFile}
@@ -104,7 +102,6 @@ const Translate = () => {
             />
           </div>
 
-          {/* Translate Button */}
           <div className="w-full flex justify-center">
             <Button
               onClick={handleTranslate}

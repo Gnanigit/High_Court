@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
+  const [showTranslateDropdown, setShowTranslateDropdown] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setShowTranslateDropdown(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setShowTranslateDropdown(false);
+    }, 300); // 300ms delay before hiding the dropdown
+  };
+
   return (
-    <header className="w-full flex-row items-center justify-between bg-white border-b  animate-fade-in">
+    <header className="w-full flex-row items-center justify-between bg-white border-b animate-fade-in">
       <div className="w-full justify-between flex items-center space-x-4 mb-3 p-4">
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-4 cursor-pointer">
@@ -60,14 +76,44 @@ const Header: React.FC = () => {
           </div>
         </div>
       </div>
-
       <nav className="bg-primary_head text-white p-3 flex items-center justify-center w-full">
         <ul className="flex space-x-6 text-md font-medium">
           <li className="hover:underline cursor-pointer">
             <Link to="/">Home</Link>
           </li>
-          <li className="hover:underline cursor-pointer">
+          <li
+            className="relative hover:underline cursor-pointer group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <Link to="/translate">Translate to Telugu</Link>
+
+            {/* Dropdown container with padding to create hover area */}
+            {showTranslateDropdown && (
+              <div
+                className="absolute left-0 top-full pt-2 z-20"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {/* Glassmorphism Dropdown */}
+                <div className="w-56 rounded-md overflow-hidden backdrop-blur-md bg-white/70 border border-white/30 shadow-lg">
+                  <div className="py-1">
+                    <Link
+                      to="/translate/single"
+                      className="block px-4 py-3 text-sm text-gray-800 hover:bg-white/60 transition duration-150"
+                    >
+                      Upload Single Document
+                    </Link>
+                    <Link
+                      to="/translate/multiple"
+                      className="block px-4 py-3 text-sm text-gray-800 hover:bg-white/60 transition duration-150"
+                    >
+                      Upload Multiple Documents
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
           </li>
           <li className="hover:underline cursor-pointer">
             <Link to="/services">Services</Link>
