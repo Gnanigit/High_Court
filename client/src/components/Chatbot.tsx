@@ -27,7 +27,7 @@ const Chatbot: React.FC = () => {
       });
   }, []);
 
-  return null; // No UI needed, just loading the chatbot script
+  return null;
 };
 
 export default Chatbot;
