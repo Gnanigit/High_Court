@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       "/api": {
         // target: "http://localhost:3001",
-        target: "https://high-court.onrender.com",
+        target: "https://high-court-hzvd.vercel.app",
         changeOrigin: true,
       },
     },
