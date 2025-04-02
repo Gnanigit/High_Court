@@ -12,11 +12,12 @@ interface DriveFile {
 const GoogleDrivePicker: React.FC = () => {
   const [openPicker] = useDrivePicker();
   const [selectedFiles, setSelectedFiles] = useState<DriveFile[]>([]);
-
+  const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+  const API_KEY = import.meta.env.VITE_API_KEY;
   const handleOpenPicker = () => {
     openPicker({
-      clientId: process.env.REACT_APP_CLIENT_ID,
-      developerKey: process.env.REACT_APP_API_KEY,
+      clientId: CLIENT_ID,
+      developerKey: API_KEY,
       viewId: "DOCS",
       showUploadView: true,
       showUploadFolders: true,
@@ -46,7 +47,7 @@ const GoogleDrivePicker: React.FC = () => {
         onClick={handleOpenPicker}
         className="bg-primary_head hover:bg-primary_head text-white px-4 py-2 rounded flex items-center mb-5"
       >
-        Open Picker
+        Import From Google Drive
       </Button>
       <div
         style={{
