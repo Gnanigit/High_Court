@@ -81,8 +81,10 @@ const TranslateSingle = () => {
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center text-center">
           <p className="text-muted-foreground text-lg max-w-2xl animate-slide-up delay-75">
-            Upload a single PDF containing text, select the languages, and
-            instantly translate the content.
+            Upload a{" "}
+            <span className="text-primary_head font-bold">single PDF</span>{" "}
+            containing text, select the languages, and instantly translate the
+            content.
           </p>
         </div>
       </div>

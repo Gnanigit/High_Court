@@ -81,8 +81,10 @@ const TranslateMultiple = () => {
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center text-center">
           <p className="text-muted-foreground text-lg max-w-2xl animate-slide-up delay-75">
-            Upload multiple PDFs containing text, select the languages, and
-            instantly translate the content.
+            Upload{" "}
+            <span className="text-primary_head font-bold">multiple PDFs</span>{" "}
+            containing text, select the languages, and instantly translate the
+            content.
           </p>
         </div>
       </div>

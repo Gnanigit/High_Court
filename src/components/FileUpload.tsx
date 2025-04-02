@@ -116,7 +116,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             )}
             {type === "single" ? (
               <p className="text-sm text-muted-foreground mb-3 max-w-xs">
-                Drag and drop a PDF file, or click to select.
+                Drag and drop a PDF file, or click to select.t
               </p>
             ) : (
               <p className="text-sm text-muted-foreground mb-3 max-w-xs">
