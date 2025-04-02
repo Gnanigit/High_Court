@@ -28,7 +28,7 @@ app.post("/api/send-approval-emails", async (req, res) => {
       },
     });
 
-    const baseUrl = process.env.CLIENT_BASE_URL || "http://localhost:5173";
+    const baseUrl = process.env.CLIENT_BASE_URL;
 
     const emailPromises = approvers.map(async (approver) => {
       const approvalLink = `${baseUrl}/approve/${
@@ -97,6 +97,10 @@ app.post("/api/send-approval-emails", async (req, res) => {
       error: error.message,
     });
   }
+});
+
+app.get("/api/test", async (req, res) => {
+  res.status(200).json({ success: true, message: "Test email sent!" });
 });
 
 app.get("/api/test-email", async (req, res) => {

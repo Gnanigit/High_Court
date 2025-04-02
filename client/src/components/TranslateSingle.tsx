@@ -18,7 +18,6 @@ const sendApprovalEmails = async (translationData: any, fileName: string) => {
   const approvers = [
     { email: "gnani4412@gmail.com", name: "Approver 1" },
     { email: "21pa1a0553@vishnu.edu.in", name: "Approver 2" },
-    { email: "21pa1a0552@vishnu.edu.in", name: "Approver 3" },
   ];
 
   try {

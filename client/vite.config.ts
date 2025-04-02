@@ -7,8 +7,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
-        // target: "https://high-court.onrender.com",
+        // target: "http://localhost:3001",
+        target: "https://high-court.onrender.com",
         changeOrigin: true,
       },
     },
