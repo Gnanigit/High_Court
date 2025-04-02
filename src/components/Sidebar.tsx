@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import images from "../consonants/images";
+import images from "@/consonants/images";
 
 interface SidebarProps {
   isCollapsed: boolean;

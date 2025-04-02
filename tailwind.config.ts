@@ -28,7 +28,10 @@ export default {
           DEFAULT: "rgba(255, 255, 255, 1)",
         },
 
-        primary_head: { DEFAULT: "rgba(175, 61, 75, 1)" },
+        primary_head: {
+          DEFAULT: "rgba(175, 61, 75, 1)",
+          shadow: "rgba(235, 150, 155, 0.5)",
+        },
 
         secondary: {
           DEFAULT: "rgba(237, 228, 211, 1)",

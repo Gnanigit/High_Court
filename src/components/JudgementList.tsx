@@ -1,32 +1,33 @@
 import React from "react";
 import JudgmentCard from "@/components/JudgementCard";
+import icons from "@/consonants/icons";
 
 const judgmentData = [
   {
     title: "High Court Judgments",
-    imageSrc: "/path-to-image/high-court.png",
+    imageSrc: icons.high_court_judgments,
   },
   {
     title: "Supreme Court Judgments",
-    imageSrc: "/path-to-image/supreme-court.png",
+    imageSrc: icons.supreme_court_judgments,
   },
   {
     title: "Other High Court Judgments",
-    imageSrc: "/path-to-image/other-high-court.png",
+    imageSrc: icons.other_high_court_judgments,
   },
   {
     title: "High Court Judgments in Telugu",
-    imageSrc: "/path-to-image/high-court-telugu.png",
+    imageSrc: icons.high_court_judgments_in_telugu,
   },
   {
     title: "Supreme Court Judgments in Telugu",
-    imageSrc: "/path-to-image/supreme-court-telugu.png",
+    imageSrc: icons.supreme_court_judgments_in_telugu,
   },
 ];
 
 const JudgmentList: React.FC = () => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 px-2 lg:px-16 mx-auto">
       {judgmentData.map((item, index) => (
         <JudgmentCard key={index} title={item.title} imageSrc={item.imageSrc} />
       ))}
