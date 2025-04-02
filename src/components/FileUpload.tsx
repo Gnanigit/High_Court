@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Cloud } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import GoogleDrivePicker from "./GoogleDrivePicker";
 
 interface FileUploadProps {
   type: string;
@@ -89,45 +90,52 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className="w-full animate-scale-in delay-150">
       {!selectedFile ? (
-        <div
-          className={`file-upload-area ${isDragging ? "dragging" : ""}`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input
-            type="file"
-            className="file-upload-input"
-            onChange={handleFileInputChange}
-            accept="image/*,application/pdf"
-            ref={fileInputRef}
-            disabled={disabled}
-          />
-          <div className="flex flex-col items-center justify-center text-center p-6">
-            <div className="mb-3 p-3 rounded-full bg-primary_head/10">
-              <Upload className="h-6 w-6 text-primary_head" />
+        <>
+          <div
+            className={`file-upload-area ${isDragging ? "dragging" : ""}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              className="file-upload-input"
+              onChange={handleFileInputChange}
+              accept="image/*,application/pdf"
+              ref={fileInputRef}
+              disabled={disabled}
+            />
+            <div className="flex flex-col items-center justify-center text-center p-6">
+              <div className="mb-3 p-3 rounded-full bg-primary_head/10">
+                <Upload className="h-6 w-6 text-primary_head" />
+              </div>
+              {type === "single" ? (
+                <h3 className="text-lg font-medium mb-1">
+                  Upload a single PDF
+                </h3>
+              ) : (
+                <h3 className="text-lg font-medium mb-1">
+                  Upload multiple PDFs in a ZIP file
+                </h3>
+              )}
+              {type === "single" ? (
+                <p className="text-sm text-muted-foreground mb-3 max-w-xs">
+                  Drag and drop a PDF file, or click to select.
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground mb-3 max-w-xs">
+                  Drag and drop a Zip file, or click to select.
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Supported format: PDF (Max 5MB for pdf)
+              </p>
             </div>
-            {type === "single" ? (
-              <h3 className="text-lg font-medium mb-1">Upload a single PDF</h3>
-            ) : (
-              <h3 className="text-lg font-medium mb-1">
-                Upload multiple PDFs in a ZIP file
-              </h3>
-            )}
-            {type === "single" ? (
-              <p className="text-sm text-muted-foreground mb-3 max-w-xs">
-                Drag and drop a PDF file, or click to select.t
-              </p>
-            ) : (
-              <p className="text-sm text-muted-foreground mb-3 max-w-xs">
-                Drag and drop a Zip file, or click to select
-              </p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Supported format: PDF (Max 5MB for pdf)
-            </p>
           </div>
-        </div>
+          <div className="flex justify-center mt-4">
+            <GoogleDrivePicker />
+          </div>
+        </>
       ) : (
         <div className="relative glass-panel rounded-lg overflow-hidden">
           <Button
