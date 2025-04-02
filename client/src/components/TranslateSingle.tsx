@@ -21,13 +21,16 @@ const sendApprovalEmails = async (translationData: any, fileName: string) => {
   ];
 
   try {
-    const response = await axios.post("/api/send-approval-emails", {
-      approvers,
-      translationData,
-      fileName,
-      subject: `Approval Request: Translation of ${fileName}`,
-      message: `A new document translation requires your approval. The document "${fileName}" has been translated and needs your review.`,
-    });
+    const response = await axios.post(
+      "https://high-court.onrender.com/api/send-approval-emails",
+      {
+        approvers,
+        translationData,
+        fileName,
+        subject: `Approval Request: Translation of ${fileName}`,
+        message: `A new document translation requires your approval. The document "${fileName}" has been translated and needs your review.`,
+      }
+    );
 
     return response.data;
   } catch (error) {
