@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import LanguageSelector from "@/components/LanguageSelector";
-import FileUpload from "@/components/FileUpload";
+import MultipleFileUpload from "./MultipleFileUpload";
 import TranslationDisplay from "@/components/TranslationDisplay";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -15,20 +15,18 @@ import {
 const TranslateMultiple = () => {
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("tel");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Updated to an array
   const [translationResult, setTranslationResult] =
     useState<TranslationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileSelected = (file: File | null) => {
-    setSelectedFile(file);
-
+  const handleFileSelected = (files: File[]) => {
+    setSelectedFiles(files);
     setTranslationResult(null);
   };
 
   const handleSourceLanguageChange = (value: string) => {
     setSourceLanguage(value);
-
     setTranslationResult(null);
   };
 
@@ -38,9 +36,9 @@ const TranslateMultiple = () => {
   };
 
   const handleTranslate = async () => {
-    if (!selectedFile) {
+    if (selectedFiles.length === 0) {
       toast.error("No file selected", {
-        description: "Please upload an image to translate",
+        description: "Please upload at least one document to translate",
       });
       return;
     }
@@ -48,20 +46,19 @@ const TranslateMultiple = () => {
     try {
       setIsLoading(true);
       setTranslationResult(null);
-      const extractedText = await extractTextFromImage(selectedFile);
-      const result = await translateText(
-        extractedText,
-        sourceLanguage,
-        targetLanguage
+
+      // Extract and translate text for all files
+      const translations = await Promise.all(
+        selectedFiles.map(async (file) => {
+          const extractedText = await extractTextFromImage(file);
+          return translateText(extractedText, sourceLanguage, targetLanguage);
+        })
       );
 
-      setTranslationResult(result);
-      const sourceLanguageFull = result
-        ? getLanguageByCode(sourceLanguage).name
-        : "Source";
-      const targetLanguageFull = result
-        ? getLanguageByCode(targetLanguage).name
-        : "Target";
+      setTranslationResult(translations[0]); // Handle multiple translations as needed
+
+      const sourceLanguageFull = getLanguageByCode(sourceLanguage).name;
+      const targetLanguageFull = getLanguageByCode(targetLanguage).name;
 
       toast.success("Translation complete", {
         description: `Translated from ${sourceLanguageFull} (${sourceLanguage}) to ${targetLanguageFull} (${targetLanguage})`,
@@ -104,11 +101,11 @@ const TranslateMultiple = () => {
           <Separator />
 
           <div className="w-full">
-            <h2 className="text-xl font-medium mb-4">Upload Document</h2>
-            <FileUpload
+            <h2 className="text-xl font-medium mb-4">Upload Documents</h2>
+            <MultipleFileUpload
               type="multiple"
-              onFileSelected={handleFileSelected}
-              selectedFile={selectedFile}
+              onFilesSelected={handleFileSelected}
+              selectedFiles={selectedFiles} // Updated prop name
               disabled={isLoading}
             />
           </div>
@@ -116,7 +113,7 @@ const TranslateMultiple = () => {
           <div className="w-full flex justify-center">
             <Button
               onClick={handleTranslate}
-              disabled={!selectedFile || isLoading}
+              disabled={selectedFiles.length === 0 || isLoading} // Fixed condition
               className="w-full sm:w-auto px-8 transition-all bg-primary_head/50 hover:bg-primary_head"
             >
               {isLoading ? "Translating..." : "Translate Now"}
