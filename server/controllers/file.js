@@ -294,7 +294,8 @@ export const downloadFile = async (req, res) => {
 export const approveTranslation = async (req, res) => {
   try {
     const { id } = req.params;
-    const { approvedBy } = req.body;
+    // Changed from 'approvedBy' to 'reviewer' to match frontend
+    const { reviewer } = req.body;
 
     const file = await File.findById(id);
 
@@ -305,9 +306,9 @@ export const approveTranslation = async (req, res) => {
       });
     }
 
-    if (approvedBy === "gnani4412@gmail.com") {
+    if (reviewer === "gnani4412@gmail.com") {
       file.approval_1 = true;
-    } else if (approvedBy === "21pa1a0553@vishnu.edu.in") {
+    } else if (reviewer === "21pa1a0553@vishnu.edu.in") {
       file.approval_2 = true;
     } else {
       return res.status(403).json({

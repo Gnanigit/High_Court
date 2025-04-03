@@ -78,7 +78,10 @@ const ApprovePage = () => {
         import.meta.env.VITE_BACKEND_URL
       }/api/translations/${id}/approve`;
       console.log(apiUrl, reviewer);
-      await axios.post(apiUrl, { reviewer });
+
+      // Changed from 'reviewer' to 'approvedBy' to match backend
+      await axios.post(apiUrl, { approvedBy: reviewer });
+
       toast.success("Translation approved successfully", {
         description: "Thank you for your review",
       });
@@ -93,7 +96,6 @@ const ApprovePage = () => {
       setIsSubmitting(false);
     }
   };
-
   const handleReject = async () => {
     if (!comments.trim()) {
       toast.error("Please provide comments", {
