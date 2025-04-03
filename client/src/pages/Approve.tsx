@@ -79,7 +79,6 @@ const ApprovePage = () => {
       }/api/translations/${id}/approve`;
       console.log(apiUrl, reviewer);
 
-      // Changed from 'reviewer' to 'approvedBy' to match backend
       await axios.post(apiUrl, { approvedBy: reviewer });
 
       toast.success("Translation approved successfully", {
