@@ -5,50 +5,34 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import router from "./routes/file.js";
 import path from "path";
+import { fileURLToPath } from "url"; // Needed for __dirname
+
+// Define __dirname manually
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
+
 const app = express();
+const PORT = process.env.SERVER_PORT || 3001;
+const MONGOOSE_URL = process.env.MONGOOSE_URL;
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
 // Connect to MongoDB
 mongoose
-  .connect(
-    process.env.MONGODB_URI || "mongodb://localhost:27017/translation-app"
-  )
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-// Middlewares
-app.use(
-  cors({
-    origin: ["http://localhost:5173", process.env.CLIENT_BASE_URL],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+  .connect(MONGOOSE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-);
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((error) => console.error("MongoDB connection error:", error));
 
-// Increase payload size limit for large files
-app.use(express.json({ limit: "15mb" }));
-app.use(express.urlencoded({ extended: true, limit: "15mb" }));
-
-// Log requests for debugging
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
-  next();
-});
-
-// API Routes
+// Routes
 app.use("/api", router);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error("Server error:", err);
-  res.status(500).json({
-    success: false,
-    message: "Server error",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined,
-  });
-});
 
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
@@ -58,8 +42,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const PORT = process.env.PORT || 3001;
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api`);
 });
