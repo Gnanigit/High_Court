@@ -263,14 +263,13 @@ const ApprovePage = () => {
     );
   }
 
-  // Create data URLs for the documents
   const originalDataUrl = getDocumentDataUrl(originalDocument);
   const translatedDataUrl = getDocumentDataUrl(translatedDocument);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background p-4 sm:p-6">
+    <div className="min-h-screen flex flex-col bg-background p-4 sm:p-6 w-full">
       <div className="container mx-auto w-full">
-        <Card className="shadow-lg">
+        <Card className="shadow-lg w-full">
           <CardHeader className="bg-secondary/20">
             <CardTitle className="text-2xl">Translation Approval</CardTitle>
             <p className="text-muted-foreground">
