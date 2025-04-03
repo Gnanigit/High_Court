@@ -1,4 +1,3 @@
-// src/pages/Approve.tsx
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,19 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
 import axios from "axios";
 
-const fetchTranslationData = async (id: string) => {
+interface TranslationData {
+  id: string;
+  fileName: string;
+  sourceLanguage: string;
+  targetLanguage: string;
+  sourceText: string;
+  translatedText: string;
+  status: string;
+}
+
+const fetchTranslationData = async (id: string): Promise<TranslationData> => {
   try {
-    return new Promise((resolve) => {
+    return await new Promise((resolve) =>
       setTimeout(() => {
         resolve({
           id,
@@ -23,13 +32,13 @@ const fetchTranslationData = async (id: string) => {
           sourceLanguage: "English",
           targetLanguage: "Telugu",
           sourceText:
-            "This is an example source text that would be much longer in a real scenario. It demonstrates how the approval page would display the content that needs review.",
+            "This is an example source text that would be much longer in a real scenario.",
           translatedText:
-            "ఇది ఒక ఉదాహరణ మూల పాఠ్యం, ఇది నిజమైన సన్నివేశంలో చాలా పొడవుగా ఉంటుంది. సమీక్ష అవసరమైన విషయాలను అనుమతి పేజీ ఎలా ప్రదర్శిస్తుందో ఇది చూపిస్తుంది.",
+            "ఇది ఒక ఉదాహరణ మూల పాఠ్యం, ఇది నిజమైన సన్నివేశంలో చాలా పొడవుగా ఉంటుంది.",
           status: "pending",
         });
-      }, 1000);
-    });
+      }, 1000)
+    );
   } catch (error) {
     console.error("Error fetching translation:", error);
     throw error;
@@ -39,10 +48,11 @@ const fetchTranslationData = async (id: string) => {
 const ApprovePage = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-
   const navigate = useNavigate();
+  const reviewer = searchParams.get("reviewer");
 
-  const [translationData, setTranslationData] = useState<any>(null);
+  const [translationData, setTranslationData] =
+    useState<TranslationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
@@ -50,44 +60,31 @@ const ApprovePage = () => {
   useEffect(() => {
     if (id) {
       setIsLoading(true);
-      // Fetch translation data
       fetchTranslationData(id)
         .then((data) => {
           setTranslationData(data);
-          setIsLoading(false);
         })
-        .catch((error) => {
-          console.error("Error fetching translation:", error);
+        .catch(() => {
           toast.error("Error loading translation data");
-          setIsLoading(false);
-        });
+        })
+        .finally(() => setIsLoading(false));
     }
   }, [id]);
 
   const handleApprove = async () => {
     setIsSubmitting(true);
-
-    const reviewerEmail = searchParams.get("reviewer");
-    console.log(reviewerEmail);
     try {
-      if (reviewerEmail === "gnani4412@gmail.com") {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`,
-          { approvedBy: reviewerEmail }
-        );
-
-        toast.success("Translation approved successfully", {
-          description: "Thank you for your review",
-        });
-
-        setTimeout(() => {
-          navigate("/approval-confirmation?status=approved");
-        }, 2000);
-      } else {
-        toast.error("You do not have permission to approve this translation.");
-      }
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`
+      );
+      toast.success("Translation approved successfully", {
+        description: "Thank you for your review",
+      });
+      setTimeout(
+        () => navigate("/approval-confirmation?status=approved"),
+        2000
+      );
     } catch (error) {
-      console.error("Error approving translation:", error);
       toast.error("Failed to submit approval");
     } finally {
       setIsSubmitting(false);
@@ -101,24 +98,22 @@ const ApprovePage = () => {
       });
       return;
     }
-
     setIsSubmitting(true);
     try {
-      // In a real app, make an API call to reject the translation
-      // e.g., await axios.post(`${import.meta.env.VITE_API_URL}/api/translations/${id}/reject`, { comments });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/translations/${id}/reject`,
+        { comments }
+      );
       toast.success("Feedback submitted successfully", {
         description: "The translation will be revised based on your feedback",
       });
-
-      // Redirect to a confirmation page after short delay
-      setTimeout(() => {
-        navigate("/approval-confirmation?status=rejected");
-      }, 2000);
+      setTimeout(
+        () => navigate("/approval-confirmation?status=rejected"),
+        2000
+      );
     } catch (error) {
-      console.error("Error rejecting translation:", error);
       toast.error("Failed to submit feedback");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -165,58 +160,35 @@ const ApprovePage = () => {
 
           <CardContent className="pt-6 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <p className="font-medium">Document Name</p>
-                <p className="text-muted-foreground">
-                  {translationData.fileName}
-                </p>
-              </div>
-              <div>
-                <p className="font-medium">Translation ID</p>
-                <p className="text-muted-foreground">{translationData.id}</p>
-              </div>
-              <div>
-                <p className="font-medium">Source Language</p>
-                <p className="text-muted-foreground">
-                  {translationData.sourceLanguage}
-                </p>
-              </div>
-              <div>
-                <p className="font-medium">Target Language</p>
-                <p className="text-muted-foreground">
-                  {translationData.targetLanguage}
-                </p>
-              </div>
+              <p className="font-medium">
+                Document Name: {translationData.fileName}
+              </p>
+              <p className="font-medium">
+                Translation ID: {translationData.id}
+              </p>
+              <p className="font-medium">
+                Source Language: {translationData.sourceLanguage}
+              </p>
+              <p className="font-medium">
+                Target Language: {translationData.targetLanguage}
+              </p>
             </div>
-
             <Separator />
-
-            <div>
-              <h3 className="text-lg font-medium mb-3">Original Text</h3>
-              <div className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-                {translationData.sourceText}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium mb-3">Translated Text</h3>
-              <div className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-                {translationData.translatedText}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium mb-3">
-                Comments (required if rejecting)
-              </h3>
-              <textarea
-                className="w-full p-3 border rounded-md h-32 bg-background"
-                placeholder="Enter your comments or feedback here..."
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
+            <h3 className="text-lg font-medium">Original Text</h3>
+            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
+              {translationData.sourceText}
+            </p>
+            <h3 className="text-lg font-medium">Translated Text</h3>
+            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
+              {translationData.translatedText}
+            </p>
+            <textarea
+              className="w-full p-3 border rounded-md h-32"
+              placeholder="Enter comments..."
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              disabled={isSubmitting}
+            />
           </CardContent>
 
           <CardFooter className="flex flex-col sm:flex-row justify-end gap-4 bg-secondary/10 p-6">
@@ -224,7 +196,6 @@ const ApprovePage = () => {
               variant="outline"
               onClick={() => navigate("/")}
               disabled={isSubmitting}
-              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
@@ -232,16 +203,15 @@ const ApprovePage = () => {
               variant="destructive"
               onClick={handleReject}
               disabled={isSubmitting}
-              className="w-full sm:w-auto"
             >
-              {isSubmitting ? "Submitting..." : "Reject Translation"}
+              {isSubmitting ? "Submitting..." : "Reject"}
             </Button>
             <Button
               onClick={handleApprove}
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-primary_head hover:bg-primary_head/90"
+              className="bg-primary_head hover:bg-primary_head/90"
             >
-              {isSubmitting ? "Submitting..." : "Approve Translation"}
+              {isSubmitting ? "Submitting..." : "Approve"}
             </Button>
           </CardFooter>
         </Card>
