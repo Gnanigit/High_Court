@@ -8,9 +8,10 @@ const Index = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeComponent, setActiveComponent] =
     useState<string>("JudgmentList");
+
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <div className=" sticky top-0 left-0 right-0  w-full z-10">
+    <div className="h-screen flex flex-col bg-gray-50">
+      <div className="sticky top-0 left-0 right-0 w-full z-10">
         <Header />
       </div>
 
@@ -18,7 +19,7 @@ const Index = () => {
         <div
           className={`${
             isCollapsed ? "w-16" : "w-64"
-          } h-full flex-shrink-0 transition-all duration-300`}
+          } h-screen flex-shrink-0 transition-all duration-300`}
         >
           <Sidebar
             isCollapsed={isCollapsed}
@@ -27,7 +28,7 @@ const Index = () => {
           />
         </div>
 
-        <div className={`flex flex-col transition-all duration-300 w-full`}>
+        <div className="flex flex-col w-full h-screen">
           <div className="flex-1 overflow-y-auto p-6">
             <Dashboard activeComponent={activeComponent} />
           </div>

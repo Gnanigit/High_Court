@@ -27,7 +27,7 @@ const judgmentData = [
 
 const JudgmentList: React.FC = () => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 px-2 lg:px-16 mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-8 lg:px-16 mx-auto">
       {judgmentData.map((item, index) => (
         <JudgmentCard key={index} title={item.title} imageSrc={item.imageSrc} />
       ))}
