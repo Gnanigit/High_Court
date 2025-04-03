@@ -58,7 +58,7 @@ const ApprovePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
-
+  console.log(id);
   useEffect(() => {
     if (id) {
       setIsLoading(true);
