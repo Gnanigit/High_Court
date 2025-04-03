@@ -24,6 +24,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   approval_3,
   onView,
 }) => {
+  console.log(approval_1);
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">

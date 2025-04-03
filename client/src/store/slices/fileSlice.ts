@@ -7,9 +7,11 @@ export interface File {
   sourceLanguage?: string;
   translatedLanguage?: string;
   translated: boolean;
-  approval_1: boolean;
-  approval_2: boolean;
-  approval_3?: boolean;
+  approvals: {
+    approval_1: boolean;
+    approval_2: boolean;
+    approval_3?: boolean;
+  };
 }
 
 interface FileState {

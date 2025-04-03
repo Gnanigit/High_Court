@@ -178,9 +178,9 @@ const Documents: React.FC = () => {
               sourceLanguage={file.sourceLanguage}
               translatedLanguage={file.translatedLanguage}
               translated={file.translated}
-              approval_1={file.approval_1}
-              approval_2={file.approval_2}
-              approval_3={file.approval_3}
+              approval_1={file.approvals.approval_1}
+              approval_2={file.approvals.approval_2}
+              approval_3={file.approvals.approval_3}
               onView={() => handleViewDocument(file.fileId)}
             />
           ))}
