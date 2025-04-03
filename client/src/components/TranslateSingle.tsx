@@ -198,9 +198,9 @@ const TranslateSingle = () => {
           </p>
         </div>
       </div>
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="w-full">
+      <main className="flex-1 container mx-auto  py-8">
+        <div className=" mx-auto items-center justify-center space-y-8">
+          <div className="w-full items-center justify-center">
             <h2 className="text-xl font-medium mb-4">Select Languages</h2>
             <LanguageSelector
               sourceLanguage={sourceLanguage}
@@ -256,6 +256,7 @@ const TranslateSingle = () => {
               <TranslationDisplay
                 result={translationResult}
                 isLoading={isLoading}
+                selectedFile={selectedFile}
               />
 
               {translationResult && !isLoading && (

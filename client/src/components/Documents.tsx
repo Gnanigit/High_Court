@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setFiles, setLoading, setError } from "../store/slices/fileSlice";
 import { getAllFiles, getFileById } from "../api/file";
 import DocumentCard from "./DocumentCard";
-import DocumentViewer from "../pages/DocumentViewer";
+import DocumentViewer from "./DocumentViewer";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Plus, FileText } from "lucide-react";
 

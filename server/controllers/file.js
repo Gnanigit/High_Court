@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import File from "../models/File.js";
 import multer from "multer";
+import { PDFDocument } from "pdf-lib";
 
 export const sendMails = async (req, res) => {
   try {
@@ -331,3 +332,96 @@ export const approveTranslation = async (req, res) => {
     });
   }
 };
+
+//added
+
+export const saveEditedPdf = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No edited PDF file uploaded",
+      });
+    }
+
+    const { originalFileId } = req.body;
+
+    // If an original file ID is provided, we're updating an existing file
+    if (originalFileId) {
+      const originalFile = await File.findById(originalFileId);
+
+      if (!originalFile) {
+        return res.status(404).json({
+          success: false,
+          message: "Original file not found",
+        });
+      }
+
+      // Update the existing file with the edited version
+      originalFile.pdfFile = req.file.buffer;
+      originalFile.updatedAt = new Date();
+      await originalFile.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "PDF updated successfully",
+        fileId: originalFile._id,
+        fileName: originalFile.fileName,
+      });
+    } else {
+      // Create a new file entry for the edited PDF
+      const newFile = new File({
+        fileName: req.body.fileName || req.file.originalname,
+        sourceLanguage: req.body.sourceLanguage || "",
+        translatedLanguage: req.body.translatedLanguage || "",
+        pdfFile: req.file.buffer,
+        pdfMimeType: req.file.mimetype,
+      });
+
+      await newFile.save();
+
+      return res.status(201).json({
+        success: true,
+        message: "Edited PDF saved successfully",
+        fileId: newFile._id,
+        fileName: newFile.fileName,
+      });
+    }
+  } catch (error) {
+    console.error("Error saving edited PDF:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while saving edited PDF",
+      error: error.message,
+    });
+  }
+};
+
+// Controller to get PDF preview without downloading
+export const getPdfPreview = async (req, res) => {
+  try {
+    const file = await File.findById(req.params.id);
+
+    if (!file) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found",
+      });
+    }
+
+    // Set appropriate headers for inline viewing
+    res.setHeader("Content-Type", file.pdfMimeType);
+    res.setHeader("Content-Disposition", `inline; filename="${file.fileName}"`);
+
+    // Send the file buffer
+    res.send(file.pdfFile);
+  } catch (error) {
+    console.error("Error serving PDF preview:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while serving PDF preview",
+    });
+  }
+};
+
+// New r

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateFile } from "@/store/slices/fileSlice";
@@ -23,6 +24,52 @@ interface TranslationData {
   translatedText: string;
   status: string;
 }
+
+const DocumentPreviewPanel = ({
+  title,
+  fileUrl,
+  fileName,
+  isLoading = false,
+}) => {
+  const isImage = fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|svg)$/);
+
+  return (
+    <div className="glass-panel rounded-lg p-4 h-full flex flex-col w-full">
+      <h3 className="text-lg font-medium mb-2">{title}</h3>
+      {isLoading ? (
+        <div className="space-y-2 flex-1">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-full w-full" />
+        </div>
+      ) : (
+        <div className="bg-secondary/10 p-3 rounded-md flex-1 overflow-hidden flex flex-col w-full">
+          <p className="text-sm font-medium mb-2">{fileName}</p>
+          {fileUrl ? (
+            isImage ? (
+              <img
+                src={fileUrl}
+                alt={fileName}
+                className="w-full h-auto max-h-[400px] object-contain"
+              />
+            ) : (
+              <iframe
+                src={fileUrl}
+                className="w-full h-[500px]"
+                title={fileName}
+                frameBorder="0"
+                allowFullScreen
+              />
+            )
+          ) : (
+            <div className="flex items-center justify-center flex-1 bg-muted/20 rounded text-sm text-muted-foreground h-[500px]">
+              No preview available
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const fetchTranslationData = async (id: string): Promise<TranslationData> => {
   try {
@@ -58,6 +105,10 @@ const ApprovePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
+  const [originalFileUrl, setOriginalFileUrl] = useState<string | null>(null);
+  const [translatedFileUrl, setTranslatedFileUrl] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (id) {
@@ -65,6 +116,24 @@ const ApprovePage = () => {
       fetchTranslationData(id)
         .then((data) => {
           setTranslationData(data);
+
+          // Set file URLs for the document preview
+          if (data.fileName) {
+            // Get the base name for the original document
+            const dashIndex = data.fileName.indexOf("-");
+            const baseName =
+              dashIndex !== -1
+                ? data.fileName.substring(0, dashIndex)
+                : data.fileName.replace(/\.[^/.]+$/, ""); // Remove extension if no dash
+
+            // Construct file URLs
+            // In a real scenario, these would be actual paths to your documents
+            const originalPath = `/original/${data.fileName}`;
+            const translatedPath = `/QIT_Model/${baseName}-QIT Output.pdf`;
+
+            setOriginalFileUrl(originalPath);
+            setTranslatedFileUrl(translatedPath);
+          }
         })
         .catch(() => {
           toast.error("Error loading translation data");
@@ -83,11 +152,7 @@ const ApprovePage = () => {
 
       const response = await axios.post(apiUrl, { approvedBy: reviewer });
 
-      // Import the necessary Redux actions and hooks
-
-      // Update Redux state with the response data
       if (response.data.success && response.data.data) {
-        // Find the file in Redux state and update it
         dispatch(updateFile(response.data.data));
       }
 
@@ -120,7 +185,6 @@ const ApprovePage = () => {
         { comments, approvedBy: reviewer }
       );
 
-      // Update Redux state if needed for rejection
       if (response.data.success && response.data.data) {
         dispatch(updateFile(response.data.data));
       }
@@ -139,6 +203,7 @@ const ApprovePage = () => {
       setIsSubmitting(false);
     }
   };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
@@ -167,9 +232,18 @@ const ApprovePage = () => {
     );
   }
 
+  // Create file names for display
+  const originalFileName = translationData.fileName;
+  const dashIndex = originalFileName.indexOf("-");
+  const baseName =
+    dashIndex !== -1
+      ? originalFileName.substring(0, dashIndex)
+      : originalFileName.replace(/\.[^/.]+$/, "");
+  const translatedFileName = `${baseName}-QIT Output.pdf`;
+
   return (
     <div className="min-h-screen flex flex-col bg-background p-4 sm:p-6">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-6xl">
         <Card className="shadow-lg">
           <CardHeader className="bg-secondary/20">
             <CardTitle className="text-2xl">Translation Approval</CardTitle>
@@ -195,14 +269,23 @@ const ApprovePage = () => {
               </p>
             </div>
             <Separator />
-            <h3 className="text-lg font-medium">Original Text</h3>
-            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-              {translationData.sourceText}
-            </p>
-            <h3 className="text-lg font-medium">Translated Text</h3>
-            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-              {translationData.translatedText}
-            </p>
+
+            {/* Document previews side by side */}
+            <div className="flex flex-row gap-6 mb-6 w-full">
+              <DocumentPreviewPanel
+                title={`Original (${translationData.sourceLanguage})`}
+                fileUrl={originalFileUrl}
+                fileName={originalFileName}
+                isLoading={false}
+              />
+              <DocumentPreviewPanel
+                title={`Translated (${translationData.targetLanguage})`}
+                fileUrl={translatedFileUrl}
+                fileName={translatedFileName}
+                isLoading={false}
+              />
+            </div>
+
             <textarea
               className="w-full p-3 border rounded-md h-32"
               placeholder="Enter comments..."

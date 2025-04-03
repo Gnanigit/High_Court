@@ -65,9 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="w-6 h-6 rounded-full"
           alt="Profile"
         />
-        {!isCollapsed && (
-          <p className="text-black font-semibold">Account Name</p>
-        )}
+        {!isCollapsed && <p className="text-black font-semibold">QuadricIT</p>}
       </div>
 
       <nav className="flex-1 mt-4">

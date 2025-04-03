@@ -10,15 +10,14 @@ import NotFound from "./pages/NotFound";
 import TranslateScreen from "./pages/TranslateScreen";
 import Chatbot from "./components/Chatbot";
 import About from "./pages/About";
-import { PDFEditor } from "./components/PDFEditor/PDFEditor";
 import ApprovalPage from "./pages/Approve";
 import ApprovalConfirmation from "./pages/ApprovalConfirmation";
+import PDFEditorDashboard from "./pages/PDFEditorDashboard.js";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <Provider store={store}>
-    {" "}
     {/* Add Redux Provider as the outer wrapper */}
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -36,7 +35,7 @@ const App = () => (
               element={<TranslateScreen type="multiple" />}
             />
             <Route path="/about" element={<About />} />
-            <Route path="/editor" element={<PDFEditor />} />
+            <Route path="/editor" element={<PDFEditorDashboard />} />
             <Route path="/approve/:id" element={<ApprovalPage />} />
             <Route
               path="/approval-confirmation"

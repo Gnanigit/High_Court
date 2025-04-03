@@ -13,13 +13,24 @@ import {
 } from "@/utils/translate";
 
 const TranslateMultiple = () => {
+  type DriveFile = {
+    id: string;
+    fileId: string;
+    name: string;
+    url: string;
+    mimeType: string;
+    webViewLink?: string;
+    webContentLink?: string;
+  };
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("tel");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Updated to an array
   const [translationResult, setTranslationResult] =
     useState<TranslationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [selectedFile, setSelectedFile] = useState<File | DriveFile | null>(
+    null
+  );
   const handleFileSelected = (files: File[]) => {
     setSelectedFiles(files);
     setTranslationResult(null);
@@ -126,6 +137,7 @@ const TranslateMultiple = () => {
               <TranslationDisplay
                 result={translationResult}
                 isLoading={isLoading}
+                selectedFile={selectedFile}
               />
             </>
           )}
