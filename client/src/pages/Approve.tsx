@@ -74,9 +74,13 @@ const ApprovePage = () => {
   const handleApprove = async () => {
     setIsSubmitting(true);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`
-      );
+      console.log(import.meta.env.VITE_API_URL);
+      const apiUrl = `${
+        import.meta.env.VITE_API_URL
+      }/api/translations/${id}/approve`;
+      console.log("API URL:", apiUrl);
+
+      await axios.post(apiUrl);
       toast.success("Translation approved successfully", {
         description: "Thank you for your review",
       });
@@ -85,6 +89,7 @@ const ApprovePage = () => {
         2000
       );
     } catch (error) {
+      console.error("Error approving translation:", error);
       toast.error("Failed to submit approval");
     } finally {
       setIsSubmitting(false);
