@@ -76,7 +76,7 @@ const ApprovePage = () => {
     try {
       console.log(import.meta.env.VITE_API_URL);
       const apiUrl = `${
-        import.meta.env.VITE_API_URL
+        import.meta.env.VITE_BACKEND_URL
       }/api/translations/${id}/approve`;
       console.log("API URL:", apiUrl);
 
