@@ -13,8 +13,8 @@ router.post("/send-approval-emails", sendMails);
 
 router.post("/files/upload", uploadPdfMiddleware, uploadPdf);
 
-router.get("/:id", getFileById);
+router.get("files/:id", getFileById);
 
-router.get("/download/:id", downloadFile);
+router.get("files/download/:id", downloadFile);
 
 export default router;

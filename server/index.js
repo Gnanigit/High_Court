@@ -16,7 +16,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
-const MONGOOSE_URL = process.env.MONGOOSE_URL;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Middleware
 app.use(cors());
@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 // Connect to MongoDB
 mongoose
-  .connect(MONGOOSE_URL, {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
