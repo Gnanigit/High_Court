@@ -68,7 +68,7 @@ const ApprovePage = () => {
     setIsSubmitting(true);
 
     const reviewerEmail = searchParams.get("reviewer");
-
+    console.log(reviewerEmail);
     try {
       if (reviewerEmail === "gnani4412@gmail.com") {
         await axios.post(
