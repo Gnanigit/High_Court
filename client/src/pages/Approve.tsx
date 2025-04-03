@@ -269,7 +269,7 @@ const ApprovePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background p-4 sm:p-6">
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto w-full">
         <Card className="shadow-lg">
           <CardHeader className="bg-secondary/20">
             <CardTitle className="text-2xl">Translation Approval</CardTitle>
