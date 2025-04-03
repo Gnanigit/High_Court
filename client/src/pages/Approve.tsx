@@ -39,6 +39,7 @@ const fetchTranslationData = async (id: string) => {
 const ApprovePage = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+
   const navigate = useNavigate();
 
   const [translationData, setTranslationData] = useState<any>(null);
@@ -71,7 +72,7 @@ const ApprovePage = () => {
     try {
       if (reviewerEmail === "gnani4412@gmail.com") {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/translations/approve`,
+          `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`,
           { approvedBy: reviewerEmail }
         );
 
