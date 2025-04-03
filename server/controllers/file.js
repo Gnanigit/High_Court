@@ -290,3 +290,44 @@ export const downloadFile = async (req, res) => {
       .json({ success: false, message: "Server error while downloading file" });
   }
 };
+
+export const approveTranslation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { approvedBy } = req.body;
+
+    const file = await File.findById(id);
+
+    if (!file) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found",
+      });
+    }
+
+    if (approvedBy === "gnani4412@gmail.com") {
+      file.approval_1 = true;
+    } else if (approvedBy === "21pa1a0553@vishnu.edu.in") {
+      file.approval_2 = true;
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to approve this translation.",
+      });
+    }
+
+    await file.save();
+
+    res.json({
+      success: true,
+      message: "Translation approved successfully",
+      data: file,
+    });
+  } catch (error) {
+    console.error("Error approving translation:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

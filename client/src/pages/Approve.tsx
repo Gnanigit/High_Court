@@ -66,22 +66,30 @@ const ApprovePage = () => {
 
   const handleApprove = async () => {
     setIsSubmitting(true);
+
+    const reviewerEmail = searchParams.get("reviewer");
+
     try {
-      // In a real app, make an API call to approve the translation
-      // e.g., await axios.post(`${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (reviewerEmail === "gnani4412@gmail.com") {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`,
+          { approvedBy: reviewerEmail }
+        );
 
-      toast.success("Translation approved successfully", {
-        description: "Thank you for your review",
-      });
+        toast.success("Translation approved successfully", {
+          description: "Thank you for your review",
+        });
 
-      // Redirect to a confirmation page after short delay
-      setTimeout(() => {
-        navigate("/approval-confirmation?status=approved");
-      }, 2000);
+        setTimeout(() => {
+          navigate("/approval-confirmation?status=approved");
+        }, 2000);
+      } else {
+        toast.error("You do not have permission to approve this translation.");
+      }
     } catch (error) {
       console.error("Error approving translation:", error);
       toast.error("Failed to submit approval");
+    } finally {
       setIsSubmitting(false);
     }
   };
