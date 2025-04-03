@@ -4,36 +4,48 @@ import images from "@/consonants/images";
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
+  setActiveComponent: (component: string) => void;
 }
 
 interface MenuItem {
   name: string;
   icon: string;
+  component: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  isCollapsed,
+  setIsCollapsed,
+  setActiveComponent,
+}) => {
   const [activeItem, setActiveItem] = useState<string>("Document Library");
 
   const menuItems: MenuItem[] = [
     {
       name: "E-Services",
       icon: "M3 10h18M3 14h18M5 6h14M7 18h10M10 21h4",
+      component: "Documents",
     },
     {
       name: "Recruitment",
       icon: "M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-6 9v-2a6 6 0 0112 0v2",
+      component: "Documents",
     },
     {
       name: "District Judiciary",
       icon: "M12 3l8 6-8 6-8-6 8-6zm0 9v9",
+      component: "Documents",
     },
     {
-      name: "Calendar",
-      icon: "M8 2v2M16 2v2M3 8h18M5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z",
+      name: "Documents",
+      icon: "M6 2H14L20 8V20A2 2 0 0 1 18 22H6A2 2 0 0 1 4 20V4A2 2 0 0 1 6 2Z M14 2V8H20",
+      component: "Documents",
     },
+
     {
       name: "Tenders",
       icon: "M3 7h18M3 12h18M3 17h18",
+      component: "Documents",
     },
   ];
 
@@ -62,9 +74,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         <ul className="space-y-2">
           {menuItems.map((item, index) => (
             <li key={index}>
-              <a
-                href="#"
-                onClick={() => setActiveItem(item.name)}
+              <button
+                onClick={() => {
+                  setActiveItem(item.name);
+                  setActiveComponent(item.component);
+                }}
                 className={`flex items-center px-4 py-3 rounded-lg font-semibold text-base transition-colors ${
                   activeItem === item.name
                     ? "border-l-4 border-primary_head bg-secondary text-black"
@@ -86,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
                   ></path>
                 </svg>
                 {!isCollapsed && <span className="ml-3">{item.name}</span>}
-              </a>
+              </button>
             </li>
           ))}
         </ul>

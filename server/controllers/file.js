@@ -125,9 +125,7 @@ export const uploadPdf = async (req, res) => {
       pdfMimeType: req.file.mimetype,
     });
 
-    console.log("Saving file to database...");
     await newFile.save();
-    console.log("File saved successfully with ID:", newFile._id);
 
     res.status(201).json({
       success: true,
@@ -153,7 +151,42 @@ export const uploadPdf = async (req, res) => {
   }
 };
 
-// Controller to get file by ID
+export const getAllFiles = async (req, res) => {
+  try {
+    const files = await File.find();
+
+    if (!files || files.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No files found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      files: files.map((file) => ({
+        fileId: file._id,
+        fileName: file.fileName,
+        sourceLanguage: file.sourceLanguage,
+        translatedLanguage: file.translatedLanguage,
+        translated: file.translated,
+        approvals: {
+          approval_1: file.approval_1,
+          approval_2: file.approval_2,
+          approval_3: file.approval_3,
+        },
+        createdAt: file.createdAt,
+      })),
+    });
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching files",
+    });
+  }
+};
+
 export const getFileById = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -164,7 +197,6 @@ export const getFileById = async (req, res) => {
         .json({ success: false, message: "File not found" });
     }
 
-    // Return file info but not the actual file content for performance
     res.status(200).json({
       success: true,
       fileId: file._id,

@@ -1,9 +1,8 @@
 import axios from "axios";
-import { addFile } from "../store/slices/fileSlice.js";
+import { addFile } from "../store/slices/fileSlice";
 
 const backend_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
-// This helper function will dispatch the action to add file to Redux after API call
 export const sendMails = async (translationData, fileName, dispatch = null) => {
   const approvers = [
     { email: "gnani4412@gmail.com", name: "Approver 1" },
@@ -83,6 +82,17 @@ export const getFileById = async (fileId, dispatch = null) => {
     return response.data;
   } catch (error) {
     console.error("Fetch file error:", error);
+    throw error;
+  }
+};
+
+export const getAllFiles = async () => {
+  try {
+    const response = await axios.get(`${backend_url}/api/files`);
+    console.log(response.data);
+    return response.data.files;
+  } catch (error) {
+    console.error("Fetch all files error:", error);
     throw error;
   }
 };
