@@ -1,35 +1,45 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setFiles, setLoading, setError } from "../store/slices/fileSlice";
-import { getAllFiles } from "../api/file";
+import { getAllFiles, getFileById } from "../api/file";
 import DocumentCard from "./DocumentCard";
+import DocumentViewer from "../pages/DocumentViewer";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Plus, FileText } from "lucide-react";
 
-// This interface needs to match with the File interface in fileSlice
-// We'll map Redux state to this format
 interface Document {
   _id: string;
   fileName: string;
+  fileId: string;
   sourceLanguage?: string;
   translatedLanguage?: string;
   translated: boolean;
   approval_1: boolean;
   approval_2: boolean;
   approval_3?: boolean;
+  pdfFile?: Buffer | Buffer<ArrayBufferLike>;
+  pdfMimeType?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const Documents: React.FC = () => {
   const dispatch = useAppDispatch();
   const { files, loading, error } = useAppSelector((state) => state.files);
   const { toast } = useToast();
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
+  const [viewerLoading, setViewerLoading] = useState(false);
 
   const fetchDocuments = async () => {
     dispatch(setLoading(true));
     try {
       const data = await getAllFiles();
+      console.log(data[0]);
       dispatch(setFiles(data));
+
       dispatch(setError(null));
     } catch (err) {
       const errorMessage =
@@ -49,15 +59,55 @@ const Documents: React.FC = () => {
     fetchDocuments();
   }, []);
 
-  const handleViewDocument = (documentId: string) => {
-    // Implement document viewing logic (navigate to details page)
-    console.log("View document:", documentId);
+  const handleViewDocument = async (documentId: string) => {
+    setViewerLoading(true);
+    try {
+      const documentDetails = await getFileById(documentId);
+      console.log(documentDetails);
+      if (documentDetails.success) {
+        setSelectedDocument({
+          ...documentDetails,
+          pdfFile: documentDetails.pdfFile,
+          pdfMimeType: documentDetails.pdfMimeType || "application/pdf",
+        });
+      } else {
+        throw new Error(documentDetails.message || "Failed to load document");
+      }
+    } catch (error) {
+      console.error("View document error:", error);
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to load document details",
+        variant: "destructive",
+      });
+    } finally {
+      setViewerLoading(false);
+    }
+  };
+
+  const handleCloseViewer = () => {
+    setSelectedDocument(null);
   };
 
   const handleUploadNew = () => {
-    // Implement upload logic or navigation
     console.log("Upload new document");
   };
+
+  if (selectedDocument) {
+    return (
+      <DocumentViewer
+        document={{
+          ...selectedDocument,
+          pdfFile: selectedDocument.pdfFile || undefined,
+          pdfMimeType: selectedDocument.pdfMimeType || "application/pdf",
+        }}
+        onBack={handleCloseViewer}
+      />
+    );
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -83,23 +133,27 @@ const Documents: React.FC = () => {
         </div>
       </div>
 
-      {loading && (
+      {(loading || viewerLoading) && (
         <div className="w-full flex justify-center items-center py-12">
           <div className="flex flex-col items-center gap-2">
-            <RefreshCw size={24} className="animate-spin text-blue-500" />
-            <p className="text-gray-600">Loading documents...</p>
+            <RefreshCw size={24} className="animate-spin text-primary_head" />
+            <p className="text-gray-600">
+              {viewerLoading
+                ? "Loading document details..."
+                : "Loading documents..."}
+            </p>
           </div>
         </div>
       )}
 
-      {error && !loading && (
+      {error && !loading && !viewerLoading && (
         <div className="w-full bg-red-50 border border-red-200 rounded-md p-4 text-red-700">
           <p className="font-medium">Error</p>
           <p className="text-sm">{error}</p>
         </div>
       )}
 
-      {!loading && !error && files.length === 0 && (
+      {!loading && !viewerLoading && !error && files.length === 0 && (
         <div className="w-full bg-gray-50 border border-gray-200 rounded-md p-12 flex flex-col items-center justify-center text-center">
           <FileText size={48} className="text-gray-400 mb-4" />
           <h3 className="text-lg font-medium text-gray-700">
@@ -115,11 +169,11 @@ const Documents: React.FC = () => {
         </div>
       )}
 
-      {!loading && !error && files.length > 0 && (
+      {!loading && !viewerLoading && !error && files.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {files.map((file) => (
             <DocumentCard
-              key={file.id}
+              key={file.fileId}
               fileName={file.fileName}
               sourceLanguage={file.sourceLanguage}
               translatedLanguage={file.translatedLanguage}
@@ -127,7 +181,7 @@ const Documents: React.FC = () => {
               approval_1={file.approval_1}
               approval_2={file.approval_2}
               approval_3={file.approval_3}
-              onView={() => handleViewDocument(file.id)}
+              onView={() => handleViewDocument(file.fileId)}
             />
           ))}
         </div>

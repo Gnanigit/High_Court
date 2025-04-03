@@ -70,16 +70,13 @@ export const uploadPdfFile = async (
   }
 };
 
-export const getFileById = async (fileId, dispatch = null) => {
+export const getFileById = async (fileId) => {
   try {
     const response = await axios.get(`${backend_url}/api/files/${fileId}`);
 
-    // If dispatch function is provided, add file to Redux store
-    if (dispatch && response.data) {
-      dispatch(addFile(response.data));
-    }
+    const fileData = response.data;
 
-    return response.data;
+    return fileData;
   } catch (error) {
     console.error("Fetch file error:", error);
     throw error;
@@ -89,10 +86,26 @@ export const getFileById = async (fileId, dispatch = null) => {
 export const getAllFiles = async () => {
   try {
     const response = await axios.get(`${backend_url}/api/files`);
-    console.log(response.data);
     return response.data.files;
   } catch (error) {
     console.error("Fetch all files error:", error);
+    throw error;
+  }
+};
+
+export const changeTranslateStatus = async (uploadedFileId) => {
+  try {
+    const response = await axios.post(
+      `${backend_url}/api/translate-status`,
+      { uploadedFileId },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch translate status error:", error);
     throw error;
   }
 };

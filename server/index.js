@@ -15,7 +15,8 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 mongoose

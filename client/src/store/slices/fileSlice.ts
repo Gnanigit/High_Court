@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface File {
   id: string;
+  fileId: string;
   fileName: string;
   sourceLanguage?: string;
   translatedLanguage?: string;

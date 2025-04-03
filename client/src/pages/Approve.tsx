@@ -13,11 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
 import axios from "axios";
 
-// In a real application, you would fetch this data from your backend
 const fetchTranslationData = async (id: string) => {
   try {
-    // This is a mock implementation
-    // In a real app, you would fetch from your API/database
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -33,10 +30,6 @@ const fetchTranslationData = async (id: string) => {
         });
       }, 1000);
     });
-
-    // Real implementation would be something like:
-    // const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/translations/${id}`);
-    // return response.data;
   } catch (error) {
     console.error("Error fetching translation:", error);
     throw error;

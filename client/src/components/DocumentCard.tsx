@@ -29,7 +29,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
       <CardContent className="p-6">
         <div className="flex items-start gap-3">
           <div className="rounded-md bg-blue-50 p-2">
-            <FileText className="h-6 w-6 text-blue-500" />
+            <FileText className="h-6 w-6 text-primary_head" />
           </div>
           <div className="flex-1 overflow-hidden">
             <h3 className="font-medium text-gray-900 truncate">{fileName}</h3>
@@ -41,33 +41,47 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         </div>
 
         <div className="grid grid-cols-3 gap-2 mt-4">
+          {/* Translated Status */}
           <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
             <span className="text-xs text-gray-500">Translated</span>
             {translated ? (
-              <Check className="h-5 w-5 text-green-500" />
+              <Check
+                className="h-6 w-6 text-green-600 font-bold"
+                strokeWidth={3}
+              />
             ) : (
-              <X className="h-5 w-5 text-primary_head" />
+              <X className="h-6 w-6 text-red-600 font-bold" strokeWidth={3} />
             )}
           </div>
+
+          {/* Review 1 Status */}
           <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
             <span className="text-xs text-gray-500">Review 1</span>
             {approval_1 ? (
-              <Check className="h-5 w-5 text-green-500" />
+              <Check
+                className="h-6 w-6 text-green-600 font-bold"
+                strokeWidth={3}
+              />
             ) : (
-              <X className="h-5 w-5 text-primary_head" />
+              <X className="h-6 w-6 text-red-600 font-bold" strokeWidth={3} />
             )}
           </div>
+
+          {/* Review 2 Status */}
           <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
             <span className="text-xs text-gray-500">Review 2</span>
             {approval_2 ? (
-              <Check className="h-5 w-5 text-green-500" />
+              <Check
+                className="h-6 w-6 text-green-600 font-bold"
+                strokeWidth={3}
+              />
             ) : (
-              <X className="h-5 w-5 text-primary_head" />
+              <X className="h-6 w-6 text-red-600 font-bold" strokeWidth={3} />
             )}
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 px-6 ">
+      <CardFooter className="bg-gray-50 px-6">
         <Button variant="outline" size="sm" className="w-full" onClick={onView}>
           View Document
         </Button>

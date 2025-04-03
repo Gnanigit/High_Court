@@ -22,9 +22,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const menuItems: MenuItem[] = [
     {
-      name: "E-Services",
-      icon: "M3 10h18M3 14h18M5 6h14M7 18h10M10 21h4",
-      component: "Documents",
+      name: "Judgments",
+      icon: "M3 21h18M12 3v18m-6-6h12m-6-9l6 6m-6-6l-6 6",
+      component: "JudgmentList",
     },
     {
       name: "Recruitment",
@@ -38,9 +38,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       name: "Documents",
-      icon: "M6 2H14L20 8V20A2 2 0 0 1 18 22H6A2 2 0 0 1 4 20V4A2 2 0 1 6 2Z M14 2V8H20",
+      icon: "M6 2H14L20 8V20A2 2 0 0 1 18 22H6A2 2 0 0 1 4 20V4A2 2 0 0 1 6 2Z M14 2V8H20",
       component: "Documents",
     },
+
     {
       name: "Tenders",
       icon: "M3 7h18M3 12h18M3 17h18",
@@ -50,14 +51,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-primary text-gray flex flex-col justify-between transition-all duration-300 h-full w-64 ${
-        isCollapsed ? "w-20" : "w-64"
-      }`}
+      className={`bg-primary text-gray flex flex-col justify-between transition-all duration-300 w-full h-full ${
+        !isCollapsed && "px-3"
+      } pt-10`}
     >
-      {/* Profile Section */}
       <div
-        className={`flex items-center w-full h-12 p-3 ${
-          isCollapsed ? "justify-center" : "gap-x-3 bg-secondary-100 rounded-lg"
+        className={`flex items-center rounded-lg w-full h-12 ${
+          isCollapsed ? "justify-center" : "gap-x-3 px-3 bg-secondary-100"
         }`}
       >
         <img
@@ -70,21 +70,20 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Menu Items */}
       <nav className="flex-1 mt-4">
         <ul className="space-y-2">
           {menuItems.map((item, index) => (
-            <li key={index} className="w-full">
+            <li key={index}>
               <button
                 onClick={() => {
                   setActiveItem(item.name);
                   setActiveComponent(item.component);
                 }}
-                className={`flex items-center w-full px-4 py-3 rounded-lg font-semibold text-base transition-colors ${
+                className={`flex items-center px-4 py-3 rounded-lg font-semibold text-base transition-colors w-full ${
                   activeItem === item.name
                     ? "border-l-4 border-primary_head bg-secondary text-black"
                     : "text-gray"
-                } hover:text-black`}
+                } hover:text-black ${isCollapsed ? "justify-center" : ""}`}
               >
                 <svg
                   className="w-5 h-5"
@@ -107,8 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </ul>
       </nav>
 
-      {/* Footer Section */}
-      <div className="mt-auto p-4 flex items-center justify-between w-full">
+      <div className="mt-auto p-4 flex items-center justify-between">
         {!isCollapsed && (
           <div className="flex items-center gap-x-3">
             <div className="w-6 h-6 bg-secondary rounded-full"></div>

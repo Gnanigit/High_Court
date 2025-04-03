@@ -11,7 +11,7 @@ import {
   translateText,
   TranslationResult,
 } from "@/utils/translate";
-import { sendMails, uploadPdfFile } from "@/api/file.js";
+import { sendMails, uploadPdfFile, changeTranslateStatus } from "@/api/file.js";
 
 const sendApprovalEmails = async (translationData: any, fileName: string) => {
   return await sendMails(translationData, fileName);
@@ -20,6 +20,7 @@ const sendApprovalEmails = async (translationData: any, fileName: string) => {
 const TranslateSingle = () => {
   type DriveFile = {
     id: string;
+    fileId: string;
     name: string;
     url: string;
     mimeType: string;
@@ -45,7 +46,6 @@ const TranslateSingle = () => {
     setTranslationResult(null);
     setUploadedFileId(null);
 
-    // When a file is selected, upload it immediately
     if (file && file instanceof File && file.type === "application/pdf") {
       try {
         setIsUploading(true);
@@ -113,6 +113,7 @@ const TranslateSingle = () => {
         ? getLanguageByCode(targetLanguage).name
         : "Target";
 
+      const statusResponse = await changeTranslateStatus(uploadedFileId);
       toast.success("Translation complete", {
         description: `Translated from ${sourceLanguageFull} (${sourceLanguage}) to ${targetLanguageFull} (${targetLanguage})`,
       });

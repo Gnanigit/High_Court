@@ -1,7 +1,6 @@
 import React from "react";
 import { TranslationResult } from "@/utils/translate";
 import { getLanguageByCode } from "@/utils/languages";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface TranslationDisplayProps {

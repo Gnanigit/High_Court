@@ -187,6 +187,44 @@ export const getAllFiles = async (req, res) => {
   }
 };
 
+export const changeTranslateStatus = async (req, res) => {
+  try {
+    const { uploadedFileId } = req.body;
+
+    if (!uploadedFileId) {
+      return res.status(400).json({
+        success: false,
+        message: "File ID is required",
+      });
+    }
+
+    const updatedFile = await File.findByIdAndUpdate(
+      uploadedFileId,
+      { translated: true },
+      { new: true }
+    );
+
+    if (!updatedFile) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Translation status updated successfully",
+      file: updatedFile,
+    });
+  } catch (error) {
+    console.error("Error changing translate status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while changing translate status",
+    });
+  }
+};
+
 export const getFileById = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -196,6 +234,9 @@ export const getFileById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "File not found" });
     }
+
+    // Convert Buffer to base64 string if it exists
+    const pdfFileBase64 = file.pdfFile ? file.pdfFile.toString("base64") : null;
 
     res.status(200).json({
       success: true,
@@ -209,7 +250,10 @@ export const getFileById = async (req, res) => {
         approval_2: file.approval_2,
         approval_3: file.approval_3,
       },
+      pdfFile: pdfFileBase64,
+      pdfMimeType: file.pdfMimeType,
       createdAt: file.createdAt,
+      updatedAt: file.updatedAt,
     });
   } catch (error) {
     console.error("Error fetching file:", error);
