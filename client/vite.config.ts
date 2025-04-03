@@ -4,15 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
-  server: {
-    proxy: {
-      "/api": {
-        // target: "http://localhost:3001",
-        target: "https://high-court.onrender.com",
-        changeOrigin: true,
-      },
-    },
-  },
   plugins: [react(), mode === "development" && componentTagger()].filter(
     Boolean
   ),

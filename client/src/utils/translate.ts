@@ -6,8 +6,6 @@ export interface TranslationResult {
 }
 
 export const extractTextFromImage = async (image: File): Promise<string> => {
-  console.log("Extracting text from image:", image.name);
-
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return "This is sample text that would be extracted from the uploaded image. In a real application, this text would be obtained using an OCR (Optical Character Recognition) service that can recognize and extract text from images.";

@@ -1,135 +1,64 @@
-// server/index.js
-const express = require("express");
-const cors = require("cors");
-const nodemailer = require("nodemailer");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import router from "./routes/file.js";
 
 // Load environment variables
 dotenv.config();
-
 const app = express();
-const PORT = process.env.SERVER_PORT || 3001;
 
-app.use(cors());
-app.use(bodyParser.json());
+// Connect to MongoDB
+mongoose
+  .connect(
+    process.env.MONGODB_URI || "mongodb://localhost:27017/translation-app"
+  )
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-app.post("/api/send-approval-emails", async (req, res) => {
-  try {
-    const { approvers, translationData, fileName, subject, message } = req.body;
-    console.log(req.body);
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || "587"),
-      secure: process.env.EMAIL_SECURE === "true",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+// Middlewares
+app.use(
+  cors({
+    origin: ["http://localhost:5173", process.env.CLIENT_BASE_URL],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-    const baseUrl = process.env.CLIENT_BASE_URL;
+// Increase payload size limit for large files
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
-    const emailPromises = approvers.map(async (approver) => {
-      const approvalLink = `${baseUrl}/approve/${
-        translationData.translationId
-      }?reviewer=${encodeURIComponent(approver.email)}`;
-
-      const htmlContent = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Translation Approval Request</h2>
-          <p>Hello ${approver.name},</p>
-          <p>${message}</p>
-          
-          <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-            <p><strong>Document:</strong> ${fileName}</p>
-            <p><strong>Source Language:</strong> ${
-              translationData.sourceLanguage
-            }</p>
-            <p><strong>Target Language:</strong> ${
-              translationData.targetLanguage
-            }</p>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <h3>Translation Preview:</h3>
-            <div style="background: #f9f9f9; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
-              <p><strong>Original:</strong></p>
-              <p>${translationData.sourceText.substring(0, 200)}${
-        translationData.sourceText.length > 200 ? "..." : ""
-      }</p>
-            </div>
-            <div style="background: #f9f9f9; padding: 10px; border-radius: 4px;">
-              <p><strong>Translated:</strong></p>
-              <p>${translationData.translatedText.substring(0, 200)}${
-        translationData.translatedText.length > 200 ? "..." : ""
-      }</p>
-            </div>
-          </div>
-          
-          <div style="margin: 25px 0; text-align: center;">
-            <a href="${approvalLink}" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Review and Approve</a>
-          </div>
-          
-          <p>Thank you for your time.</p>
-          <p>Best regards,<br>Translation System</p>
-        </div>
-      `;
-
-      return transporter.sendMail({
-        from:
-          process.env.EMAIL_FROM ||
-          '"Translation System" <notifications@example.com>',
-        to: approver.email,
-        subject: subject,
-        html: htmlContent,
-      });
-    });
-
-    await Promise.all(emailPromises);
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Approval emails sent successfully" });
-  } catch (error) {
-    console.error("Error sending approval emails:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to send approval emails",
-      error: error.message,
-    });
-  }
+// Log requests for debugging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+  next();
 });
 
-app.get("/api/test", async (req, res) => {
-  res.status(200).json({ success: true, message: "Test email sent!" });
+// API Routes
+app.use("/api", router);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  res.status(500).json({
+    success: false,
+    message: "Server error",
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+  });
 });
 
-app.get("/api/test-email", async (req, res) => {
-  try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || "587"),
-      secure: process.env.EMAIL_SECURE === "true",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+// Serve static assets in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: "gnani4412@gmail.com",
-      subject: "Test Email",
-      text: "This is a test email from your server.",
-    });
-
-    res.status(200).json({ success: true, message: "Test email sent!" });
-  } catch (error) {
-    console.error("Email test failed:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// Start the server
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`API available at http://localhost:${PORT}/api`);
 });

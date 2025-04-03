@@ -11,32 +11,10 @@ import {
   translateText,
   TranslationResult,
 } from "@/utils/translate";
-
-import axios from "axios";
+import { sendMails, uploadPdfFile } from "@/api/file.js";
 
 const sendApprovalEmails = async (translationData: any, fileName: string) => {
-  const approvers = [
-    { email: "gnani4412@gmail.com", name: "Approver 1" },
-    { email: "21pa1a0553@vishnu.edu.in", name: "Approver 2" },
-  ];
-
-  try {
-    const response = await axios.post(
-      "https://high-court.onrender.com/api/send-approval-emails",
-      {
-        approvers,
-        translationData,
-        fileName,
-        subject: `Approval Request: Translation of ${fileName}`,
-        message: `A new document translation requires your approval. The document "${fileName}" has been translated and needs your review.`,
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Error sending approval emails:", error);
-    throw error;
-  }
+  return await sendMails(translationData, fileName);
 };
 
 const TranslateSingle = () => {
@@ -56,13 +34,39 @@ const TranslateSingle = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | DriveFile | null>(
     null
   );
+  const [uploadedFileId, setUploadedFileId] = useState<string | null>(null);
 
-  const handleFileSelected = (file: File | DriveFile | null) => {
+  const handleFileSelected = async (file: File | DriveFile | null) => {
     setSelectedFile(file);
     setTranslationResult(null);
+    setUploadedFileId(null);
+
+    // When a file is selected, upload it immediately
+    if (file && file instanceof File && file.type === "application/pdf") {
+      try {
+        setIsUploading(true);
+        const result = await uploadPdfFile(
+          file,
+          sourceLanguage,
+          targetLanguage
+        );
+        setUploadedFileId(result.fileId);
+        toast.success("File uploaded successfully", {
+          description: `${file.name} has been uploaded to the server`,
+        });
+      } catch (error) {
+        console.error("File upload error:", error);
+        toast.error("File upload failed", {
+          description: "An error occurred while uploading the file",
+        });
+      } finally {
+        setIsUploading(false);
+      }
+    }
   };
 
   const handleSourceLanguageChange = (value: string) => {
@@ -128,8 +132,6 @@ const TranslateSingle = () => {
     try {
       setIsSaving(true);
 
-      // Implement save functionality here (e.g., saving to database)
-      // This is a placeholder for the actual implementation
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast.success("Translation saved", {
@@ -164,7 +166,7 @@ const TranslateSingle = () => {
         targetLanguage: getLanguageByCode(targetLanguage).name,
         sourceText: translationResult.originalText,
         translatedText: translationResult.translatedText,
-        translationId: Date.now().toString(), // Generate a unique ID (use a proper UUID in production)
+        translationId: uploadedFileId || Date.now().toString(), // Use the uploaded file ID if available
       };
 
       // Send approval emails
@@ -204,7 +206,7 @@ const TranslateSingle = () => {
               targetLanguage={targetLanguage}
               onSourceLanguageChange={handleSourceLanguageChange}
               onTargetLanguageChange={handleTargetLanguageChange}
-              disabled={isLoading || isSaving || isSubmitting}
+              disabled={isLoading || isSaving || isSubmitting || isUploading}
             />
           </div>
 
@@ -216,14 +218,31 @@ const TranslateSingle = () => {
               type="single"
               onFileSelected={handleFileSelected}
               selectedFile={selectedFile}
-              disabled={isLoading || isSaving || isSubmitting}
+              disabled={isLoading || isSaving || isSubmitting || isUploading}
             />
+            {isUploading && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Uploading file to server...
+              </p>
+            )}
+            {uploadedFileId && (
+              <p className="text-sm text-green-600 mt-2">
+                File uploaded successfully (ID: {uploadedFileId.substring(0, 8)}
+                ...)
+              </p>
+            )}
           </div>
 
           <div className="w-full flex justify-center">
             <Button
               onClick={handleTranslate}
-              disabled={!selectedFile || isLoading || isSaving || isSubmitting}
+              disabled={
+                !selectedFile ||
+                isLoading ||
+                isSaving ||
+                isSubmitting ||
+                isUploading
+              }
               className="w-full sm:w-auto px-8 transition-all bg-primary_head/50 hover:bg-primary_head"
             >
               {isLoading ? "Translating..." : "Translate Now"}
