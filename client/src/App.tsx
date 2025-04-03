@@ -37,7 +37,7 @@ const App = () => (
             />
             <Route path="/about" element={<About />} />
             <Route path="/editor" element={<PDFEditor />} />
-            <Route path="/approve" element={<ApprovalPage />} />
+            <Route path="/approve/:id" element={<ApprovalPage />} />
             <Route
               path="/approval-confirmation"
               element={<ApprovalConfirmation />}
