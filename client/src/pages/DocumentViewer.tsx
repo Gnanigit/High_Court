@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Updated interface to include approvals as a nested object
 interface DocumentViewProps {
   document: {
     _id: string;
@@ -27,9 +28,11 @@ interface DocumentViewProps {
     sourceLanguage?: string;
     translatedLanguage?: string;
     translated: boolean;
-    approval_1: boolean;
-    approval_2: boolean;
-    approval_3?: boolean;
+    approvals: {
+      approval_1: boolean;
+      approval_2: boolean;
+      approval_3?: boolean;
+    };
     pdfFile: Buffer;
     pdfMimeType: string;
     createdAt: string;
@@ -39,6 +42,7 @@ interface DocumentViewProps {
 }
 
 const DocumentViewer: React.FC<DocumentViewProps> = ({ document, onBack }) => {
+  console.log(document.approvals);
   const [activeTab, setActiveTab] = useState("preview");
   const arrayBufferToBase64 = (buffer: Buffer | ArrayBuffer) => {
     if (typeof window === "undefined") {
@@ -128,11 +132,18 @@ const DocumentViewer: React.FC<DocumentViewProps> = ({ document, onBack }) => {
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
                   <StatusItem label="Translated" status={document.translated} />
-                  <StatusItem label="Review 1" status={document.approval_1} />
-                  <StatusItem label="Review 2" status={document.approval_2} />
-                  {document.approval_3 !== undefined && (
-                    <StatusItem label="Review 3" status={document.approval_3} />
-                  )}
+                  <StatusItem
+                    label="Review 1"
+                    status={document.approvals.approval_1}
+                  />
+                  <StatusItem
+                    label="Review 2"
+                    status={document.approvals.approval_2}
+                  />
+                  <StatusItem
+                    label="Review 3"
+                    status={document.approvals.approval_3 || false}
+                  />
                 </div>
               </div>
 

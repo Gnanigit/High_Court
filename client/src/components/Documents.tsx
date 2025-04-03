@@ -15,9 +15,11 @@ interface Document {
   sourceLanguage?: string;
   translatedLanguage?: string;
   translated: boolean;
-  approval_1: boolean;
-  approval_2: boolean;
-  approval_3?: boolean;
+  approvals: {
+    approval_1: boolean;
+    approval_2: boolean;
+    approval_3?: boolean;
+  };
   pdfFile?: Buffer | Buffer<ArrayBufferLike>;
   pdfMimeType?: string;
   createdAt: string;
@@ -39,7 +41,6 @@ const Documents: React.FC = () => {
       const data = await getAllFiles();
       console.log(data[0]);
       dispatch(setFiles(data));
-
       dispatch(setError(null));
     } catch (err) {
       const errorMessage =
@@ -65,8 +66,14 @@ const Documents: React.FC = () => {
       const documentDetails = await getFileById(documentId);
       console.log(documentDetails);
       if (documentDetails.success) {
+        // Transform the flat approval properties into the required approvals object
         setSelectedDocument({
           ...documentDetails,
+          approvals: {
+            approval_1: documentDetails.approvals.approval_1,
+            approval_2: documentDetails.approvals.approval_2,
+            approval_3: documentDetails.approvals.approval_3,
+          },
           pdfFile: documentDetails.pdfFile,
           pdfMimeType: documentDetails.pdfMimeType || "application/pdf",
         });
