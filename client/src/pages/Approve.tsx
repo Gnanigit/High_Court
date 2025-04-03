@@ -74,13 +74,11 @@ const ApprovePage = () => {
   const handleApprove = async () => {
     setIsSubmitting(true);
     try {
-      console.log(import.meta.env.VITE_API_URL);
       const apiUrl = `${
         import.meta.env.VITE_BACKEND_URL
       }/api/translations/${id}/approve`;
-      console.log("API URL:", apiUrl);
-
-      await axios.post(apiUrl);
+      console.log(apiUrl, reviewer);
+      await axios.post(apiUrl, { reviewer });
       toast.success("Translation approved successfully", {
         description: "Thank you for your review",
       });
