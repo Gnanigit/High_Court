@@ -72,7 +72,7 @@ const DocumentViewer: React.FC<DocumentViewProps> = ({ document, onBack }) => {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-6">
+    <div className="container mx-auto ">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="sm" className="mr-2" onClick={onBack}>
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
