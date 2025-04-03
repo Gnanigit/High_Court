@@ -131,7 +131,7 @@ const ApprovePage = () => {
             fileName.substring(0, fileName.lastIndexOf(".")) || fileName;
 
           const translatedFileName = `${baseName}-QIT Output.pdf`;
-
+          console.log(translatedFileName);
           const translatedDocResponse = await axios.get(
             `/QIT_Model/${translatedFileName}`,
             {
