@@ -11,6 +11,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateFile } from "@/store/slices/fileSlice";
 
 interface TranslationData {
   id: string;
@@ -50,7 +52,7 @@ const ApprovePage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const reviewer = searchParams.get("reviewer");
-
+  const dispatch = useAppDispatch();
   const [translationData, setTranslationData] =
     useState<TranslationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +81,15 @@ const ApprovePage = () => {
       }/api/translations/${id}/approve`;
       console.log(apiUrl, reviewer);
 
-      await axios.post(apiUrl, { approvedBy: reviewer });
+      const response = await axios.post(apiUrl, { approvedBy: reviewer });
+
+      // Import the necessary Redux actions and hooks
+
+      // Update Redux state with the response data
+      if (response.data.success && response.data.data) {
+        // Find the file in Redux state and update it
+        dispatch(updateFile(response.data.data));
+      }
 
       toast.success("Translation approved successfully", {
         description: "Thank you for your review",
@@ -95,6 +105,7 @@ const ApprovePage = () => {
       setIsSubmitting(false);
     }
   };
+
   const handleReject = async () => {
     if (!comments.trim()) {
       toast.error("Please provide comments", {
@@ -104,10 +115,16 @@ const ApprovePage = () => {
     }
     setIsSubmitting(true);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/translations/${id}/reject`,
-        { comments }
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/translations/${id}/reject`,
+        { comments, approvedBy: reviewer }
       );
+
+      // Update Redux state if needed for rejection
+      if (response.data.success && response.data.data) {
+        dispatch(updateFile(response.data.data));
+      }
+
       toast.success("Feedback submitted successfully", {
         description: "The translation will be revised based on your feedback",
       });
@@ -116,12 +133,12 @@ const ApprovePage = () => {
         2000
       );
     } catch (error) {
+      console.error("Error rejecting translation:", error);
       toast.error("Failed to submit feedback");
     } finally {
       setIsSubmitting(false);
     }
   };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">

@@ -46,6 +46,14 @@ const fileSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    updateFile: (state, action: PayloadAction<File>) => {
+      const index = state.files.findIndex(
+        (file) => file.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.files[index] = action.payload;
+      }
+    },
   },
 });
 
@@ -56,5 +64,6 @@ export const {
   clearFiles,
   setLoading,
   setError,
+  updateFile,
 } = fileSlice.actions;
 export default fileSlice.reducer;
