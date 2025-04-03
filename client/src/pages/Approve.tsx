@@ -10,40 +10,85 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { updateFile } from "@/store/slices/fileSlice";
+import { getFileById } from "../api/file";
 
 interface TranslationData {
   id: string;
   fileName: string;
   sourceLanguage: string;
   targetLanguage: string;
-  sourceText: string;
-  translatedText: string;
   status: string;
+  pdfFile?: string | Buffer | ArrayBuffer;
+  pdfMimeType?: string;
 }
 
-const fetchTranslationData = async (id: string): Promise<TranslationData> => {
-  try {
-    return await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve({
-          id,
-          fileName: "Example Document.pdf",
-          sourceLanguage: "English",
-          targetLanguage: "Telugu",
-          sourceText:
-            "This is an example source text that would be much longer in a real scenario.",
-          translatedText:
-            "ఇది ఒక ఉదాహరణ మూల పాఠ్యం, ఇది నిజమైన సన్నివేశంలో చాలా పొడవుగా ఉంటుంది.",
-          status: "pending",
-        });
-      }, 1000)
+const DocumentPreviewPanel = ({
+  title,
+  dataUrl,
+  fileName,
+  isLoading = false,
+}) => {
+  if (isLoading) {
+    return (
+      <div className="glass-panel rounded-lg p-4 h-full flex flex-col w-full">
+        <h3 className="text-lg font-medium mb-2">{title}</h3>
+        <div className="space-y-2 flex-1">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-full w-full" />
+        </div>
+      </div>
     );
-  } catch (error) {
-    console.error("Error fetching translation:", error);
-    throw error;
+  }
+
+  const isImage = fileName
+    ?.toLowerCase()
+    .match(/\.(jpg|jpeg|png|gif|bmp|svg)$/);
+
+  return (
+    <div className="glass-panel rounded-lg p-4 h-full flex flex-col w-full">
+      <h3 className="text-lg font-medium mb-2">{title}</h3>
+      <div className="bg-secondary/10 p-3 rounded-md flex-1 overflow-hidden flex flex-col w-full">
+        <p className="text-sm font-medium mb-2">{fileName || "Document"}</p>
+        {dataUrl ? (
+          isImage ? (
+            <img
+              src={dataUrl}
+              alt={fileName}
+              className="w-full h-auto max-h-[500px] object-contain"
+            />
+          ) : (
+            <iframe
+              src={dataUrl}
+              className="w-full h-[500px]"
+              title={fileName}
+              frameBorder="0"
+              allowFullScreen
+            />
+          )
+        ) : (
+          <div className="flex items-center justify-center flex-1 bg-muted/20 rounded text-sm text-muted-foreground h-[500px]">
+            No preview available
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const arrayBufferToBase64 = (buffer) => {
+  if (typeof window === "undefined") {
+    return Buffer.from(buffer).toString("base64");
+  } else {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
   }
 };
 
@@ -53,25 +98,87 @@ const ApprovePage = () => {
   const navigate = useNavigate();
   const reviewer = searchParams.get("reviewer");
   const dispatch = useAppDispatch();
-  const [translationData, setTranslationData] =
-    useState<TranslationData | null>(null);
+
+  const [originalDocument, setOriginalDocument] = useState(null);
+  const [translatedDocument, setTranslatedDocument] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
-  console.log(id);
+
+  // Fetch original document and find translated document
   useEffect(() => {
-    if (id) {
+    const fetchDocuments = async () => {
+      if (!id) return;
+
       setIsLoading(true);
-      fetchTranslationData(id)
-        .then((data) => {
-          setTranslationData(data);
-        })
-        .catch(() => {
-          toast.error("Error loading translation data");
-        })
-        .finally(() => setIsLoading(false));
-    }
+      try {
+        // Fetch original document
+        const documentDetails = await getFileById(id);
+
+        if (!documentDetails.success) {
+          throw new Error(documentDetails.message || "Failed to load document");
+        }
+
+        // Set original document data
+        const originalDoc = {
+          ...documentDetails.data,
+          pdfMimeType: documentDetails.data.pdfMimeType || "application/pdf",
+        };
+        setOriginalDocument(originalDoc);
+
+        // Find translated document in QIT_Model folder with same name pattern
+        try {
+          // Extract base name for matching the translated file
+          const fileName = originalDoc.fileName;
+          const baseName =
+            fileName.substring(0, fileName.lastIndexOf(".")) || fileName;
+
+          // Construct QIT model file path/name
+          const translatedFileName = `${baseName}-QIT Output.pdf`;
+
+          // In a real implementation, you'd query the backend for this file
+          // For this example, we'll attempt to fetch it directly
+          const translatedDocResponse = await axios.get(
+            `/QIT_Model/${translatedFileName}`,
+            {
+              responseType: "arraybuffer",
+            }
+          );
+
+          if (translatedDocResponse.status === 200) {
+            setTranslatedDocument({
+              fileName: translatedFileName,
+              pdfFile: translatedDocResponse.data,
+              pdfMimeType: "application/pdf",
+            });
+          }
+        } catch (translatedError) {
+          console.error("Error loading translated document:", translatedError);
+          // Don't throw here - we'll just show "no preview available" for translated doc
+        }
+      } catch (error) {
+        console.error("Error loading documents:", error);
+        toast.error("Error loading document data", {
+          description:
+            error instanceof Error ? error.message : "Unknown error occurred",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDocuments();
   }, [id]);
+
+  const getDocumentDataUrl = (document) => {
+    if (!document || !document.pdfFile) return null;
+
+    return `data:${document.pdfMimeType || "application/pdf"};base64,${
+      typeof document.pdfFile === "string"
+        ? document.pdfFile
+        : arrayBufferToBase64(document.pdfFile)
+    }`;
+  };
 
   const handleApprove = async () => {
     setIsSubmitting(true);
@@ -79,15 +186,10 @@ const ApprovePage = () => {
       const apiUrl = `${
         import.meta.env.VITE_BACKEND_URL
       }/api/translations/${id}/approve`;
-      console.log(apiUrl, reviewer);
 
       const response = await axios.post(apiUrl, { approvedBy: reviewer });
 
-      // Import the necessary Redux actions and hooks
-
-      // Update Redux state with the response data
       if (response.data.success && response.data.data) {
-        // Find the file in Redux state and update it
         dispatch(updateFile(response.data.data));
       }
 
@@ -120,7 +222,6 @@ const ApprovePage = () => {
         { comments, approvedBy: reviewer }
       );
 
-      // Update Redux state if needed for rejection
       if (response.data.success && response.data.data) {
         dispatch(updateFile(response.data.data));
       }
@@ -139,12 +240,13 @@ const ApprovePage = () => {
       setIsSubmitting(false);
     }
   };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="text-center">
           <h2 className="text-2xl font-medium mb-4">
-            Loading translation data...
+            Loading document data...
           </h2>
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
         </div>
@@ -152,13 +254,13 @@ const ApprovePage = () => {
     );
   }
 
-  if (!translationData) {
+  if (!originalDocument) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="text-center max-w-md">
-          <h2 className="text-2xl font-medium mb-4">Translation Not Found</h2>
+          <h2 className="text-2xl font-medium mb-4">Document Not Found</h2>
           <p className="text-muted-foreground mb-6">
-            The translation you are looking for does not exist or may have been
+            The document you are looking for does not exist or may have been
             already processed.
           </p>
           <Button onClick={() => navigate("/")}>Return to Homepage</Button>
@@ -167,9 +269,13 @@ const ApprovePage = () => {
     );
   }
 
+  // Create data URLs for the documents
+  const originalDataUrl = getDocumentDataUrl(originalDocument);
+  const translatedDataUrl = getDocumentDataUrl(translatedDocument);
+
   return (
     <div className="min-h-screen flex flex-col bg-background p-4 sm:p-6">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-6xl">
         <Card className="shadow-lg">
           <CardHeader className="bg-secondary/20">
             <CardTitle className="text-2xl">Translation Approval</CardTitle>
@@ -182,30 +288,39 @@ const ApprovePage = () => {
           <CardContent className="pt-6 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <p className="font-medium">
-                Document Name: {translationData.fileName}
+                Document Name: {originalDocument.fileName}
+              </p>
+              <p className="font-medium">Document ID: {originalDocument.id}</p>
+              <p className="font-medium">
+                Source Language: {originalDocument.sourceLanguage || "English"}
               </p>
               <p className="font-medium">
-                Translation ID: {translationData.id}
-              </p>
-              <p className="font-medium">
-                Source Language: {translationData.sourceLanguage}
-              </p>
-              <p className="font-medium">
-                Target Language: {translationData.targetLanguage}
+                Target Language: {originalDocument.targetLanguage || "Telugu"}
               </p>
             </div>
             <Separator />
-            <h3 className="text-lg font-medium">Original Text</h3>
-            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-              {translationData.sourceText}
-            </p>
-            <h3 className="text-lg font-medium">Translated Text</h3>
-            <p className="bg-secondary/10 p-4 rounded-md whitespace-pre-wrap">
-              {translationData.translatedText}
-            </p>
+
+            {/* Document previews side by side */}
+            <div className="flex flex-col md:flex-row gap-6 w-full">
+              <DocumentPreviewPanel
+                title="Original Document"
+                dataUrl={originalDataUrl}
+                fileName={originalDocument.fileName}
+                isLoading={false}
+              />
+              <DocumentPreviewPanel
+                title="Translated Document"
+                dataUrl={translatedDataUrl}
+                fileName={
+                  translatedDocument?.fileName || "Translated Output.pdf"
+                }
+                isLoading={false}
+              />
+            </div>
+
             <textarea
               className="w-full p-3 border rounded-md h-32"
-              placeholder="Enter comments..."
+              placeholder="Enter comments or feedback..."
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               disabled={isSubmitting}

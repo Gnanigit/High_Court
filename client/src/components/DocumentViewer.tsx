@@ -42,7 +42,6 @@ interface DocumentViewProps {
 }
 
 const DocumentViewer: React.FC<DocumentViewProps> = ({ document, onBack }) => {
-  console.log(document.approvals);
   const [activeTab, setActiveTab] = useState("preview");
   const arrayBufferToBase64 = (buffer: Buffer | ArrayBuffer) => {
     if (typeof window === "undefined") {

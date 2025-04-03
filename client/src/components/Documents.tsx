@@ -64,7 +64,7 @@ const Documents: React.FC = () => {
     setViewerLoading(true);
     try {
       const documentDetails = await getFileById(documentId);
-      console.log(documentDetails);
+
       if (documentDetails.success) {
         // Transform the flat approval properties into the required approvals object
         setSelectedDocument({
