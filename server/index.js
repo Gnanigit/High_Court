@@ -5,11 +5,6 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import router from "./routes/file.js";
 import path from "path";
-import { fileURLToPath } from "url"; // Needed for __dirname
-
-// Define __dirname manually
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -33,14 +28,6 @@ mongoose
 
 // Routes
 app.use("/api", router);
-
-// Serve static assets in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client/build")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  });
-}
 
 // Start the server
 app.listen(PORT, () => {
