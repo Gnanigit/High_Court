@@ -119,31 +119,26 @@ const ApprovePage = () => {
           throw new Error(documentDetails.message || "Failed to load document");
         }
 
-        // Set original document data
         const originalDoc = {
-          ...documentDetails.data,
-          pdfMimeType: documentDetails.data.pdfMimeType || "application/pdf",
+          ...documentDetails,
+          pdfMimeType: documentDetails.pdfMimeType || "application/pdf",
         };
         setOriginalDocument(originalDoc);
 
-        // Find translated document in QIT_Model folder with same name pattern
         try {
-          // Extract base name for matching the translated file
           const fileName = originalDoc.fileName;
           const baseName =
             fileName.substring(0, fileName.lastIndexOf(".")) || fileName;
 
-          // Construct QIT model file path/name
           const translatedFileName = `${baseName}-QIT Output.pdf`;
 
-          // In a real implementation, you'd query the backend for this file
-          // For this example, we'll attempt to fetch it directly
           const translatedDocResponse = await axios.get(
             `/QIT_Model/${translatedFileName}`,
             {
               responseType: "arraybuffer",
             }
           );
+          console.log(translatedDocResponse);
 
           if (translatedDocResponse.status === 200) {
             setTranslatedDocument({
@@ -154,7 +149,6 @@ const ApprovePage = () => {
           }
         } catch (translatedError) {
           console.error("Error loading translated document:", translatedError);
-          // Don't throw here - we'll just show "no preview available" for translated doc
         }
       } catch (error) {
         console.error("Error loading documents:", error);
