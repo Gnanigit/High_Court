@@ -114,7 +114,7 @@ const ApprovePage = () => {
       try {
         // Fetch original document
         const documentDetails = await getFileById(id);
-
+        console.log(documentDetails);
         if (!documentDetails.success) {
           throw new Error(documentDetails.message || "Failed to load document");
         }
