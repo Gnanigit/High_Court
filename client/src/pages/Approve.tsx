@@ -39,7 +39,6 @@ const fetchTranslationData = async (id: string) => {
 const ApprovePage = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const reviewer = searchParams.get("reviewer");
   const navigate = useNavigate();
 
   const [translationData, setTranslationData] = useState<any>(null);
