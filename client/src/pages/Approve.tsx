@@ -71,7 +71,7 @@ const ApprovePage = () => {
     try {
       if (reviewerEmail === "gnani4412@gmail.com") {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/translations/${id}/approve`,
+          `${import.meta.env.VITE_API_URL}/api/translations/approve`,
           { approvedBy: reviewerEmail }
         );
 
