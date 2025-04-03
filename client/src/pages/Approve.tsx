@@ -128,7 +128,7 @@ const ApprovePage = () => {
         try {
           const fileName = originalDoc.fileName;
           const baseName =
-            fileName.substring(0, fileName.lastIndexOf(".")) || fileName;
+            fileName.substring(0, fileName.lastIndexOf("-")) || fileName;
 
           const translatedFileName = `${baseName}-QIT Output.pdf`;
           console.log(translatedFileName);
