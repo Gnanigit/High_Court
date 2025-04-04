@@ -130,7 +130,7 @@ const ApprovePage = () => {
           const baseName =
             fileName.substring(0, fileName.lastIndexOf("-")) || fileName;
 
-          const translatedFileName = `${baseName}-QIT Output.pdf`;
+          const translatedFileName = `${baseName}-Telugu.pdf`;
           console.log(translatedFileName);
           const translatedDocResponse = await axios.get(
             `/QIT_Model/${translatedFileName}`,
@@ -211,7 +211,15 @@ const ApprovePage = () => {
     }
     setIsSubmitting(true);
     try {
-      // No backend call for rejection
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/translations/${id}/reject`,
+        { comments, approvedBy: reviewer }
+      );
+
+      if (response.data.success && response.data.data) {
+        dispatch(updateFile(response.data.data));
+      }
+
       toast.success("Feedback submitted successfully", {
         description: "The translation will be revised based on your feedback",
       });
