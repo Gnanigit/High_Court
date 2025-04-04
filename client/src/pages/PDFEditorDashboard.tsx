@@ -17,7 +17,7 @@ const PDFEditorDashboard = () => {
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/api/files");
+      const response = await fetch("https://high-court.onrender.com/api/files");
       if (!response.ok) {
         throw new Error("Failed to fetch files");
       }
