@@ -98,6 +98,9 @@ const TranslateSingle = () => {
       setIsLoading(true);
       setTranslationResult(null);
 
+      // Add a manual delay (e.g., 2 seconds)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const extractedText = await extractTextFromImage(selectedFile);
       const result = await translateText(
         extractedText,
@@ -154,12 +157,8 @@ const TranslateSingle = () => {
     try {
       setIsSubmitting(true);
 
-      // First save the translation
-      // Implement save functionality here (e.g., saving to database)
-      // This is a placeholder for the actual implementation
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Prepare data for approval emails
       const fileName =
         selectedFile instanceof File ? selectedFile.name : "document";
       const translationData = {
@@ -167,7 +166,7 @@ const TranslateSingle = () => {
         targetLanguage: getLanguageByCode(targetLanguage).name,
         sourceText: translationResult.originalText,
         translatedText: translationResult.translatedText,
-        translationId: uploadedFileId || Date.now().toString(), // Use the uploaded file ID if available
+        translationId: uploadedFileId || Date.now().toString(),
       };
 
       // Send approval emails
