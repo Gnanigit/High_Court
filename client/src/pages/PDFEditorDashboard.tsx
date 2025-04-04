@@ -44,7 +44,7 @@ const PDFEditorDashboard = () => {
         setSelectedFile(file);
 
         // Generate a preview URL for the selected file
-        const previewUrl = `http://localhost:3001/api/files/preview/${fileId}`;
+        const previewUrl = `http://high-court.onrender.com/api/files/preview/${fileId}`;
         setPdfUrl(previewUrl);
       }
     } catch (error) {
@@ -70,7 +70,7 @@ const PDFEditorDashboard = () => {
 
       // Send the edited PDF to the server
       const response = await fetch(
-        "http://localhost:3001/api/files/save-edited",
+        "http://high-court.onrender.com/api/files/save-edited",
         {
           method: "POST",
           body: formData,
@@ -112,10 +112,13 @@ const PDFEditorDashboard = () => {
       formData.append("pdfFile", file);
       formData.append("fileName", file.name);
 
-      const response = await fetch("http://localhost:3001/api/files/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://high-court.onrender.com/api/files/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to upload file");
