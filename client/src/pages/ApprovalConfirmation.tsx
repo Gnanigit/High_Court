@@ -1,3 +1,4 @@
+// src/pages/ApprovalConfirmation.tsx
 import React from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
