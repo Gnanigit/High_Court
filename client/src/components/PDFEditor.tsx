@@ -189,7 +189,7 @@ function PDFEditor({ pdfUrl, onSave, isLoading }) {
           {absolutePdfUrl ? (
             <iframe
               src={absolutePdfUrl}
-              className="w-full h-[700px]"
+              className="w-full h-[800px]"
               title="PDF Document"
               frameBorder="0"
               allowFullScreen
