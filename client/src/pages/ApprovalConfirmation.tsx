@@ -30,7 +30,7 @@ const ApprovalConfirmation = () => {
               </>
             ) : (
               <>
-                <XCircle className="text-red-600" />
+                <CheckCircle className="text-green-600" />
                 <span>Feedback Submitted</span>
               </>
             )}
