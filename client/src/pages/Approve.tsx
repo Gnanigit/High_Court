@@ -105,12 +105,14 @@ const ApprovePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
 
+  // Fetch original document and find translated document
   useEffect(() => {
     const fetchDocuments = async () => {
       if (!id) return;
 
       setIsLoading(true);
       try {
+        // Fetch original document
         const documentDetails = await getFileById(id);
         console.log(documentDetails);
         if (!documentDetails.success) {
@@ -128,7 +130,7 @@ const ApprovePage = () => {
           const baseName =
             fileName.substring(0, fileName.lastIndexOf("-")) || fileName;
 
-          const translatedFileName = `${baseName}-Telugu.pdf`;
+          const translatedFileName = `${baseName}-QIT Output.pdf`;
           console.log(translatedFileName);
           const translatedDocResponse = await axios.get(
             `/QIT_Model/${translatedFileName}`,
