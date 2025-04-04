@@ -34,10 +34,27 @@ export const sendMails = async (req, res) => {
               
               <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
                 <p><strong>Document:</strong> ${fileName}</p>
-                <p><strong>Source Language:</strong> ${translationData.sourceLanguage}</p>
-                <p><strong>Target Language:</strong> ${translationData.targetLanguage}</p>
+                <p><strong>Source Language:</strong> ${
+                  translationData.sourceLanguage
+                }</p>
+                <p><strong>Target Language:</strong> ${
+                  translationData.targetLanguage
+                }</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-      
+                <h3>Translation Preview:</h3>
+                <div style="background: #f9f9f9; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                  <p><strong>Original:</strong></p>
+                  <p>${translationData.sourceText.substring(0, 200)}${
+        translationData.sourceText.length > 200 ? "..." : ""
+      }</p>
+                </div>
+                <div style="background: #f9f9f9; padding: 10px; border-radius: 4px;">
+                  <p><strong>Translated:</strong></p>
+                  <p>${translationData.translatedText.substring(0, 200)}${
+        translationData.translatedText.length > 200 ? "..." : ""
+      }</p>
+                </div>
+              </div>
               
               <div style="margin: 25px 0; text-align: center;">
                 <a href="${approvalLink}" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Review and Approve</a>
@@ -406,3 +423,5 @@ export const getPdfPreview = async (req, res) => {
     });
   }
 };
+
+// New r
