@@ -83,7 +83,7 @@ const TranslationDisplay: React.FC<TranslationDisplayProps> = ({
         const baseName =
           dashIndex !== -1 ? fileName.substring(0, dashIndex) : fileName;
 
-        const translatedFilePath = `/QIT_Model/${baseName}-QIT Output.pdf`;
+        const translatedFilePath = `/QIT_Model/${baseName}-Telugu.pdf`;
 
         console.log(translatedFilePath);
         setTranslatedFileUrl(translatedFilePath);
@@ -122,7 +122,7 @@ const TranslationDisplay: React.FC<TranslationDisplayProps> = ({
   const dashIndex = fileName.indexOf("-");
   const baseName =
     dashIndex !== -1 ? fileName.substring(0, dashIndex) : fileName;
-  const translatedFileName = `${baseName}-QIT Output.pdf`;
+  const translatedFileName = `${baseName}-Telugu.pdf`;
 
   return (
     <div className="w-full animate-fade-in delay-300">
