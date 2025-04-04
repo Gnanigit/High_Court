@@ -31,6 +31,7 @@ export default {
         primary_head: {
           DEFAULT: "rgba(175, 61, 75, 1)",
           shadow: "rgba(235, 150, 155, 0.5)",
+          hover: "rgba(144, 35, 46, 1)",
         },
 
         secondary: {

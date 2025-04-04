@@ -110,3 +110,89 @@ export const changeTranslateStatus = async (uploadedFileId) => {
     throw error;
   }
 };
+
+export const fetchAllFiles = async () => {
+  try {
+    console.log(backend_url);
+    const response = await axios.get(`${backend_url}/api/files`);
+    if (response.data.success) {
+      return response.data.files;
+    }
+    throw new Error(response.data.message || "Failed to fetch files");
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    throw error;
+  }
+};
+
+// Get preview URL for a file
+export const getFilePreviewUrl = (fileId) => {
+  return `${backend_url}/api/files/preview/${fileId}`;
+};
+
+// Save edited PDF
+export const saveEditedPdf = async (
+  editedPdfBlob,
+  fileName,
+  originalFileId
+) => {
+  try {
+    const formData = new FormData();
+    formData.append("pdfFile", editedPdfBlob, fileName);
+
+    if (originalFileId) {
+      formData.append("originalFileId", originalFileId);
+    }
+
+    const response = await axios.post(
+      `${backend_url}/files/save-edited`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || "Unknown error");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error saving PDF:", error);
+    throw error;
+  }
+};
+
+// Upload new PDF file
+export const uploadPdfFileEditor = async (file) => {
+  if (!file || file.type !== "application/pdf") {
+    throw new Error("Please select a valid PDF file.");
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("pdfFile", file);
+    formData.append("fileName", file.name);
+
+    const response = await axios.post(
+      `${BASE_URL}/api/files/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || "Unknown error");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading PDF:", error);
+    throw error;
+  }
+};
