@@ -44,7 +44,7 @@ const PDFEditorDashboard = () => {
         setSelectedFile(file);
 
         // Generate a preview URL for the selected file
-        const previewUrl = `http://high-court.onrender.com/api/files/preview/${fileId}`;
+        const previewUrl = `https://high-court.onrender.com/api/files/preview/${fileId}`;
         setPdfUrl(previewUrl);
       }
     } catch (error) {
@@ -70,7 +70,7 @@ const PDFEditorDashboard = () => {
 
       // Send the edited PDF to the server
       const response = await fetch(
-        "http://high-court.onrender.com/api/files/save-edited",
+        "https://high-court.onrender.com/api/files/save-edited",
         {
           method: "POST",
           body: formData,
