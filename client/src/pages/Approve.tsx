@@ -200,37 +200,24 @@ const ApprovePage = () => {
     }
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
+    // Modified to skip backend call
     if (!comments.trim()) {
       toast.error("Please provide comments", {
         description: "Comments are required when rejecting a translation",
       });
       return;
     }
+
     setIsSubmitting(true);
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/translations/${id}/reject`,
-        { comments, approvedBy: reviewer }
-      );
 
-      if (response.data.success && response.data.data) {
-        dispatch(updateFile(response.data.data));
-      }
+    // Show success toast and redirect without making API call
+    toast.success("Feedback submitted successfully", {
+      description: "The translation will be revised based on your feedback",
+    });
 
-      toast.success("Feedback submitted successfully", {
-        description: "The translation will be revised based on your feedback",
-      });
-      setTimeout(
-        () => navigate("/approval-confirmation?status=rejected"),
-        2000
-      );
-    } catch (error) {
-      console.error("Error rejecting translation:", error);
-      toast.error("Failed to submit feedback");
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Just navigate to the confirmation screen with rejected status
+    setTimeout(() => navigate("/approval-confirmation?status=rejected"), 2000);
   };
 
   if (isLoading) {
