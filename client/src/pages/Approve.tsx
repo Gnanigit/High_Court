@@ -105,14 +105,12 @@ const ApprovePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState("");
 
-  // Fetch original document and find translated document
   useEffect(() => {
     const fetchDocuments = async () => {
       if (!id) return;
 
       setIsLoading(true);
       try {
-        // Fetch original document
         const documentDetails = await getFileById(id);
         console.log(documentDetails);
         if (!documentDetails.success) {
