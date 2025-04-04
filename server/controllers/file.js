@@ -306,9 +306,9 @@ export const approveTranslation = async (req, res) => {
       });
     }
 
-    if (approvedBy === "gnani4412@gmail.com") {
+    if (approvedBy === "virtual.squad9@gmail.com") {
       file.approval_1 = true;
-    } else if (approvedBy === "21pa1a0553@vishnu.edu.in") {
+    } else if (approvedBy === "ashishthatavarthy9@gmail.com") {
       file.approval_2 = true;
     } else {
       return res.status(403).json({
