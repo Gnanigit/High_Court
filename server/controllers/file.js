@@ -293,6 +293,8 @@ export const approveTranslation = async (req, res) => {
       file.approval_1 = true;
     } else if (approvedBy === "ashishthatavarthy9@gmail.com") {
       file.approval_2 = true;
+    } else if (approvedBy === "gnani4412@gmail.com") {
+      file.approval_3 = true;
     } else {
       return res.status(403).json({
         success: false,
