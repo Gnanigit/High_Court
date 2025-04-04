@@ -5,8 +5,9 @@ const backend_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
 export const sendMails = async (translationData, fileName, dispatch = null) => {
   const approvers = [
-    { email: "gnani4412@gmail.com", name: "Approver 1" },
-    { email: "21pa1a0553@vishnu.edu.in", name: "Approver 2" },
+    { email: "virtual.squad9@gmail.com", name: "Approver 1" },
+    { email: "ashishthatavarthy9@gmail.com", name: "Approver 2" },
+    { email: "gnani4412@gmail.com", name: "Approver 3" },
   ];
 
   try {
