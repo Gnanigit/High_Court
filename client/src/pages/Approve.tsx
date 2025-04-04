@@ -317,14 +317,14 @@ const ApprovePage = () => {
               variant="destructive"
               onClick={handleReject}
               disabled={isSubmitting}
-              className="bg-red-700 hover:bg-red-700/90"
+              className="bg-red-700 hover:bg-red-700/90 text-white"
             >
               {isSubmitting ? "Submitting..." : "Reject"}
             </Button>
             <Button
               onClick={handleApprove}
               disabled={isSubmitting}
-              className="bg-green-700 hover:bg-green-700/90"
+              className="bg-green-700 hover:bg-green-700/90 text-white"
             >
               {isSubmitting ? "Submitting..." : "Approve"}
             </Button>
