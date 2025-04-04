@@ -99,7 +99,7 @@ const TranslateSingle = () => {
       setTranslationResult(null);
 
       // Add a manual delay (e.g., 2 seconds)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 6000));
 
       const extractedText = await extractTextFromImage(selectedFile);
       const result = await translateText(
