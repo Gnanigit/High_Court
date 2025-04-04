@@ -317,7 +317,7 @@ const ApprovePage = () => {
               variant="destructive"
               onClick={handleReject}
               disabled={isSubmitting}
-              className="bg-primary_head hover:bg-primary_head/90"
+              className="bg-red-700 hover:bg-red-700/90"
             >
               {isSubmitting ? "Submitting..." : "Reject"}
             </Button>
