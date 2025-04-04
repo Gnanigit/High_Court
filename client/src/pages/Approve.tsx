@@ -209,15 +209,7 @@ const ApprovePage = () => {
     }
     setIsSubmitting(true);
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/translations/${id}/reject`,
-        { comments, approvedBy: reviewer }
-      );
-
-      if (response.data.success && response.data.data) {
-        dispatch(updateFile(response.data.data));
-      }
-
+      // No backend call for rejection
       toast.success("Feedback submitted successfully", {
         description: "The translation will be revised based on your feedback",
       });
